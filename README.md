@@ -6,7 +6,7 @@ Requirements
 ===========
 ### Platform
 
-* Suse SLES 11 SP1 (check [PAM](https://service.sap.com/sap/support/pam) for changes)
+* Suse SLES 11 SP2 (check [PAM](https://service.sap.com/sap/support/pam) for changes)
 * approx. 5GB in the directory specified in attribute `['install'].['tempdir']`
 
 ### Attributes
