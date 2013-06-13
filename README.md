@@ -49,29 +49,29 @@ All attributes under ['hana'].['dist'] hierarchy are related to distributed SAP 
 ---
 Recipes
 ===========
-### hanadb::install
+### hana::install
 Installs single SAP Hana database on the node. 
 
-### hanadb::upgrade
+### hana::upgrade
 Recipe for upgrading an existing installation of SAP Hana on the node.
 
-### hanadb::install-client
+### hana::install-client
 Installs SAP Hana client on the node. The client will be installed into `['hana']['installpath']`/hdbclient.  
 The SAP Hana client installer accepts a parameter "*-s SID*", thereby "coupling" the client to a SAP Hana installation with the given SID on the same node.  
 If a stand-alone installation of the SAP Hana client is desired (i.e. there is **no** SAP Hana installation on the node), set the node attribute `['hana']['clientsid']` to "false".
 
-### hanadb::upgrade-client
+### hana::upgrade-client
 Recipe for upgrading an existing installation of SAP Hana client on the node.  
-As with the **[hanadb::install-client]** recipe, the node attribute `['hana']['clientsid']` needs to be set to "false" if this is a stand-alone client installation.
+As with the **[hana::install-client]** recipe, the node attribute `['hana']['clientsid']` needs to be set to "false" if this is a stand-alone client installation.
 
-### hanadb::install-worker
+### hana::install-worker
 Recipe to add a worker node to existing SAP Hana distributed cluster. To use this recipe you must provide the shared storage information by overriding the attribute ['hana'].['dist'].['sharedvolume']. See examples of distributed installation below.
 
 ---
 Usage
 ===========
 ### Single SAP Hana node
-Add the **[hanadb::install]** recipe to a new node in your landscape if you're planning a vanilla installation of SAP Hana. Change/override any attributes as required.
+Add the **[hana::install]** recipe to a new node in your landscape if you're planning a vanilla installation of SAP Hana. Change/override any attributes as required.
 
 #### Example
 To install SAP Hana on a node, and override the installation path and the SYSTEM user password use the following role:
@@ -87,10 +87,10 @@ To install SAP Hana on a node, and override the installation path and the SYSTEM
 	  }
 	)
 
-	run_list "recipe[hanadb::install]"
+	run_list "recipe[hana::install]"
 
 ### SAP Hana client on a node
-For installing SAP Hana client on a node in your landscape, add the **[hanadb::install-client]** recipe to the node's run list. If it should be a stand-alone installation of SAP Hana client, set a node attribute `['hana']['clientsid']` to "false".
+For installing SAP Hana client on a node in your landscape, add the **[hana::install-client]** recipe to the node's run list. If it should be a stand-alone installation of SAP Hana client, set a node attribute `['hana']['clientsid']` to "false".
 
 #### Example
 To install SAP Hana client on a node, use the following role:
@@ -104,14 +104,14 @@ To install SAP Hana client on a node, use the following role:
 	  }
 	)
 
-	run_list "recipe[hanadb::install-client]"
+	run_list "recipe[hana::install-client]"
 
 ### Updrading existing SAP Hana installations
-The recipes **[hanadb::upgrade]** and **[hanadb::upgrade-client]** - as the names imply - will upgrade an existing SAP Hana and SAP Hana client, respectively.  
+The recipes **[hana::upgrade]** and **[hana::upgrade-client]** - as the names imply - will upgrade an existing SAP Hana and SAP Hana client, respectively.  
 Ensure that the upgrade packages are accessible by setting the node attributes `['install']['files']['hanadb']` and `['install']['files']['hanaclient']` accordingly.
 
 ### Distributed SAP Hana cluster
-To install a distributed SAP Hana cluster you must have a shared NFS share prepared. You can use chef NFS cookbook for this, or manually create NFS share. Once the share is avalable you must provide the share information in the attribute ['hana'].['dist'].['sharedvolume']. This is needed for the first node (master) and the other nodes (workers). The master node is installed by using the hanadb:install recipe and the workers are installed by using the hanadb:install-worker recipe.
+To install a distributed SAP Hana cluster you must have a shared NFS share prepared. You can use chef NFS cookbook for this, or manually create NFS share. Once the share is avalable you must provide the share information in the attribute ['hana'].['dist'].['sharedvolume']. This is needed for the first node (master) and the other nodes (workers). The master node is installed by using the hana:install recipe and the workers are installed by using the hana:install-worker recipe.
 
 #### Example
 Assuming we have NFS share exported on your-nfs-node.yourdomain.com:/some/export/hana . To install the master node use the following role:
@@ -129,7 +129,7 @@ Assuming we have NFS share exported on your-nfs-node.yourdomain.com:/some/export
 		}
 	)
 
-	run_list "recipe[hanadb::install]"
+	run_list "recipe[hana::install]"
 
 This will mount the sharedvolume on your loclal installpath "/your/path/hana" and install the master SAP Hana database instance in it.
 Then use the following role to add new worker nodes to the cluster:
@@ -147,7 +147,7 @@ Then use the following role to add new worker nodes to the cluster:
 		}
 	)
 
-	run_list "recipe[hanadb::install-worker]"
+	run_list "recipe[hana::install-worker]"
 
 ---
 Provided LWRP

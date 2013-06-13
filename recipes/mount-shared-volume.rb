@@ -1,4 +1,4 @@
-# Cookbook Name:: hanadb
+# Cookbook Name:: hana
 # Recipe:: mount-shared-volume
 # Mount the shared volume for HANA distributed installs 
 

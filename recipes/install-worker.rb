@@ -1,11 +1,11 @@
-# Cookbook Name:: hanadb
+# Cookbook Name:: hana
 # Recipe:: install-worker
 # Installs SAP Hana worker on the node.
 
 # check if there is a shared volume defined - if yes, mount it and continue, if no exit
 if "#{node['hana']['dist']['sharedvolume']}" != ""
   Chef::Log.info "a shared volume #{node['hana']['dist']['sharedvolume']} is defined and will be mounted"
-  include_recipe "hanadb::mount-shared-volume"
+  include_recipe "hana::mount-shared-volume"
 else
   raise "No shared volume defined, thus a worker node install is not possible"
 end

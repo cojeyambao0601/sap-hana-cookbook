@@ -1,4 +1,4 @@
-# Cookbook Name:: hanadb
+# Cookbook Name:: hana
 # Recipe:: install-client
 # Installs SAP Hana client on the node.
 
