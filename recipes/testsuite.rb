@@ -1,3 +1,9 @@
+node['hana']['checkhardware'] = false
+
+include_recipe "testsuite"
+include_recipe "hanadb::install"
+include_recipe "hanadb::install-client"
+
 remote_directory "/root/features/#{cookbook_name}/" do
   source "testsuite/features"
   owner "root"
