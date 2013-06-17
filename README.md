@@ -154,15 +154,15 @@ Provided LWRP
 ===============
 The LWRP which are incuded with this cookbook are wrapping different hana client utilities. This is very useful when you need to automate different hana related tasks with chef automation. Operations like schema creation, execution of sql commands or files with sql commands and various hana repository operations are supported. You can use any provided resource on any machine where you are using the hana client recipe (install-client).
 
-### hanadb\_hdbsql 
+### hana\_hdbsql 
 
 #### Description
 
-Applications or other cookbooks can use the hanadb\_hdbsql resource to run sql commands or execute a list of commands from a .sql file.
+Applications or other cookbooks can use the hana\_hdbsql resource to run sql commands or execute a list of commands from a .sql file.
 
 #### Usage
 
-To use hanadb_runsql command, you must specify the following parameters:
+To use hana_runsql command, you must specify the following parameters:
 * sql_command or sql_file_path
    - sql_command - a single command to run
    - sql_file_path - full path to .sql file which may contain multiple commands / sql statements
@@ -195,7 +195,7 @@ To use hanadb_runsql command, you must specify the following parameters:
 
 To run a SQL command directly:
 
-	hanadb_runsql "select some rows from a table" do
+	hana_runsql "select some rows from a table" do
 		sql_command "SELECT * FROM \"MYSCHEMA\".\"MYTABLENAME\""
 		username "YOUR-HANA-USER-NAME"
 		password "YOUR-HANA-USER-PASSWORD"
@@ -203,7 +203,7 @@ To run a SQL command directly:
 
 To execute a list of commands from .sql file:
 
-	hanadb_runsql "hanadb_runsql from file - /mydir/mysqlfile.sql" do
+	hana_runsql "hana_runsql from file - /mydir/mysqlfile.sql" do
 		sql_file_path "/mydir/mysqlfile.sql"
 		username "YOUR-HANA-USER-NAME"
 		password "YOUR-HANA-USER-PASSWORD"
@@ -211,7 +211,7 @@ To execute a list of commands from .sql file:
 
 To execute a SQL command, and write output to a file without table headers or the command itself:
 
-	hanadb_hdbsql "Check number of documents in the view" do
+	hana_hdbsql "Check number of documents in the view" do
 		sql_command "SELECT count(distinct \"id\") as count FROM \"_SYS_BIC\".\"srch/AV_DOCS_GRP_CONTENT_MD\""
 		print_sql_commands false
 		print_table_header false         
@@ -220,15 +220,15 @@ To execute a SQL command, and write output to a file without table headers or th
 		password "YOUR-HANA-USER-PASSWORD"
 	end
 
-### hanadb\_hdbuserstore
+### hana\_hdbuserstore
 
 #### Description
 
-In SAP Hana, automation around the content repository is done via the regi command line utility. To be able to use the regi command, you need to initialize a local user store, which will contain authentication information to your SAP Hana system. Use the hanadb\_hdbuserstore resource to create / delete local user stores befause any regi usage.
+In SAP Hana, automation around the content repository is done via the regi command line utility. To be able to use the regi command, you need to initialize a local user store, which will contain authentication information to your SAP Hana system. Use the hana\_hdbuserstore resource to create / delete local user stores befause any regi usage.
 
 #### Usage
 
-The hanadb_hdbuserstore resource has 2 actions: set and delete.
+The hana_hdbuserstore resource has 2 actions: set and delete.
 
 The set action is used to create a new user store. The delete action is used to remove existing user store.
 
@@ -261,7 +261,7 @@ Here are the accepted arguments:
 To add a new store with key "buildkey":
 
 	# create hdbuserstore
-	hanadb_hdbuserstore "buildkey" do
+	hana_hdbuserstore "buildkey" do
 		username "SYSTEM"
 		password "SYSTEM user password"
 	end
@@ -269,11 +269,11 @@ To add a new store with key "buildkey":
 To remove a store with key "buildkey":
 
 	# remove workspace
-	hanadb_hdbuserstore "buildkey" do
+	hana_hdbuserstore "buildkey" do
 		action :delete
 	end
 
-### hanadb\_regi
+### hana\_regi
 
 #### Description
 
@@ -282,14 +282,14 @@ The regi command line utility is used to automate operations around the HANA rep
 #### Usages
 
 ##### regi workspace operations
-The hanadb_regi has 2 actions which relate to creation and removal of a regi workspace: create_workspace and delete_workspace. A workspace is a local instance of the SAP Hana repository. To execute any repository operation you have to create a workspace first.
+The hana_regi has 2 actions which relate to creation and removal of a regi workspace: create_workspace and delete_workspace. A workspace is a local instance of the SAP Hana repository. To execute any repository operation you have to create a workspace first.
 
 ##### Examples
 
 To add a new workspace using the user store with key "buildkey":
 
 	# create workspace
-	hanadb_regi "create repository workspace" do
+	hana_regi "create repository workspace" do
 		key "buildkey"
 		workspace_path "/your/path/to/new/workspace"
 		action :create_workspace
@@ -298,20 +298,20 @@ To add a new workspace using the user store with key "buildkey":
 To remove a workspace with key "buildkey":
 
 	# remove workspace
-	hanadb_regi "Delete workspace" do
+	hana_regi "Delete workspace" do
 		workspace_path "#{regi_workspace}"
 		action :delete_workspace
 	end
 
 ##### regi delivery unit operations
-The hanadb_regi has 2 actions which relate to delivery unit mechanism: export_delivery_unit and import_delivery_unit. A delivery unit in SAP Hana is usually a package of application code, view, tables and data. You can use export_delivery_unit action to export code from existing development machine into a archved file, and import_delivery_unit to import the same archive into a different system. This can be useful in continuous integration / delivery process. In addition when installing a new SAP Hana instance, you might want to import existing applications / functionality which comes with SAP Hana installation in the form of optional delivery units. Examples to this are INA services and UI toolkits and Custom Text analytics dictinaries.
+The hana_regi has 2 actions which relate to delivery unit mechanism: export_delivery_unit and import_delivery_unit. A delivery unit in SAP Hana is usually a package of application code, view, tables and data. You can use export_delivery_unit action to export code from existing development machine into a archved file, and import_delivery_unit to import the same archive into a different system. This can be useful in continuous integration / delivery process. In addition when installing a new SAP Hana instance, you might want to import existing applications / functionality which comes with SAP Hana installation in the form of optional delivery units. Examples to this are INA services and UI toolkits and Custom Text analytics dictinaries.
 
 ##### Examples
 
 To import a delivery unit use:
 
 	# import INA UI toolkit
-	hanadb_regi "Import INA UI Toolkit delivery unit" do
+	hana_regi "Import INA UI Toolkit delivery unit" do
 		delivery_unit_path "#{node['hana']['installpath']}/#{node['hana']['sid']}/global/hdb/content/HCO_INA_UITOOLKIT.tgz"
 		workspace_path "#{regi_workspace}"
 		action :import_delivery_unit
@@ -320,7 +320,7 @@ To import a delivery unit use:
 To export a delivery unit use:
 
 	# export DU, this will export the package com.sap.someapp to a file in /your/export/path/com.sap.someapp.tgz
-	hanadb_regi "Export delivery unit" do
+	hana_regi "Export delivery unit" do
 		delivery_unit_name "com.sap.someapp"
 		delivery_unit_vendor "sap"
 		delivery_unit_path "/your/export/path/"
@@ -329,14 +329,14 @@ To export a delivery unit use:
 	end
 
 ##### regi package operations
-The hanadb_regi has 3 actions which relate to management of packages: track_package, untrack_package and delete_package. Packages in hana are simmilar to packages in Java, and are used to bundle together application files which relates to the same topic. Use track_package if you want to work on a specific package on you local workspace. Use untrack_package to remove a workspace link to a packge. Use delete_package to delete the contents of a package from the local workspace and from the local file system
+The hana_regi has 3 actions which relate to management of packages: track_package, untrack_package and delete_package. Packages in hana are simmilar to packages in Java, and are used to bundle together application files which relates to the same topic. Use track_package if you want to work on a specific package on you local workspace. Use untrack_package to remove a workspace link to a packge. Use delete_package to delete the contents of a package from the local workspace and from the local file system
 
 ##### Examples
 
 To track a package "mypackage.app"
 
 	# track
-	hanadb_regi "Track package mypackage.app" do
+	hana_regi "Track package mypackage.app" do
 		package "mypackage.app"
 		workspace_path "#{regi_workspace}"
 		action :track_package
@@ -345,7 +345,7 @@ To track a package "mypackage.app"
 To untrack a package "mypackage.app"
 
 	# track
-	hanadb_regi "Un track package mypackage.app" do
+	hana_regi "Un track package mypackage.app" do
 		package "mypackage.app"
 		workspace_path "#{regi_workspace}"
 		action :untrack_package
@@ -354,21 +354,21 @@ To untrack a package "mypackage.app"
 To delete a package "mypackage.app"
 
 	# completely delete
-	hanadb_regi "Delete package mypackage.app" do
+	hana_regi "Delete package mypackage.app" do
 		workspace_path "#{regi_workspace}"
 		package "mypackage.app"
 		action :delete_package
 	end
 
 ##### regi repository operations
-The hanadb_regi has 4 actions which relate to repository manipulation: checkout, commit, activate, and revert. These are similar to common source control repository operations, and allow to checkout, commit and revert files. In addition there is an action which activates the application in the repository, and applies it to the SAP Hana system. An example to activation is activation of attribute / analytical / calculation views. But also other artifacts might be in a need of activation before they can be used in productive manner.
+The hana_regi has 4 actions which relate to repository manipulation: checkout, commit, activate, and revert. These are similar to common source control repository operations, and allow to checkout, commit and revert files. In addition there is an action which activates the application in the repository, and applies it to the SAP Hana system. An example to activation is activation of attribute / analytical / calculation views. But also other artifacts might be in a need of activation before they can be used in productive manner.
 
 ##### Examples
 
 Some useful examples of how to use checkout
 
 	# checkout
-	hanadb_regi "Checkout package mypackage.app" do
+	hana_regi "Checkout package mypackage.app" do
 		workspace_path "#{regi_workspace}"
 		force true
 		package "mypackage.app"
@@ -376,7 +376,7 @@ Some useful examples of how to use checkout
 	end
 	
 	# checkout
-	hanadb_regi "Checkout package mypackage.app and it's sub packages" do
+	hana_regi "Checkout package mypackage.app and it's sub packages" do
 		workspace_path "#{regi_workspace}"
 		force true
 		packages "mypackage.app"
@@ -384,7 +384,7 @@ Some useful examples of how to use checkout
 	end
 	
 	# checkout
-	hanadb_regi "Checkout all tracked objects" do
+	hana_regi "Checkout all tracked objects" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object_type "trackedPackages"
@@ -392,7 +392,7 @@ Some useful examples of how to use checkout
 	end
 	
 	# checkout
-	hanadb_regi "Checkout a file" do
+	hana_regi "Checkout a file" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object "/my/path/to/a/tracked/file"
@@ -402,7 +402,7 @@ Some useful examples of how to use checkout
 Some useful examples of how to use commit
 
 	# commit
-	hanadb_regi "Commit package mypackage.app" do
+	hana_regi "Commit package mypackage.app" do
 		workspace_path "#{regi_workspace}"
 		force true
 		package "mypackage.app"
@@ -410,7 +410,7 @@ Some useful examples of how to use commit
 	end
 	
 	# commit
-	hanadb_regi "Commit package mypackage.app and it's sub packages" do
+	hana_regi "Commit package mypackage.app and it's sub packages" do
 		workspace_path "#{regi_workspace}"
 		force true
 		packages "mypackage.app"
@@ -418,7 +418,7 @@ Some useful examples of how to use commit
 	end
 	
 	# commit
-	hanadb_regi "Commit all tracked objects" do
+	hana_regi "Commit all tracked objects" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object_type "trackedPackages"
@@ -426,7 +426,7 @@ Some useful examples of how to use commit
 	end
 	
 	# commit
-	hanadb_regi "Commit a file" do
+	hana_regi "Commit a file" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object "/my/path/to/a/tracked/file"
@@ -436,7 +436,7 @@ Some useful examples of how to use commit
 Some useful examples of how to use revert
 
 	# revert
-	hanadb_regi "Revert package mypackage.app" do
+	hana_regi "Revert package mypackage.app" do
 		workspace_path "#{regi_workspace}"
 		force true
 		package "mypackage.app"
@@ -444,7 +444,7 @@ Some useful examples of how to use revert
 	end
 	
 	# revert
-	hanadb_regi "Revert package mypackage.app and it's sub packages" do
+	hana_regi "Revert package mypackage.app and it's sub packages" do
 		workspace_path "#{regi_workspace}"
 		force true
 		packages "mypackage.app"
@@ -452,7 +452,7 @@ Some useful examples of how to use revert
 	end
 	
 	# revert
-	hanadb_regi "Revert all tracked objects" do
+	hana_regi "Revert all tracked objects" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object_type "trackedPackages"
@@ -460,7 +460,7 @@ Some useful examples of how to use revert
 	end
 	
 	# revert
-	hanadb_regi "Revert all inactive objects" do
+	hana_regi "Revert all inactive objects" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object_type "inactiveObjects"
@@ -469,7 +469,7 @@ Some useful examples of how to use revert
 	
 	
 	# revert
-	hanadb_regi "Revert a file" do
+	hana_regi "Revert a file" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object "/my/path/to/a/tracked/file"
@@ -479,7 +479,7 @@ Some useful examples of how to use revert
 Some useful examples of how to use activate
 
 	# activate
-	hanadb_regi "Activate package mypackage.app" do
+	hana_regi "Activate package mypackage.app" do
 		workspace_path "#{regi_workspace}"
 		force true
 		package "mypackage.app"
@@ -487,7 +487,7 @@ Some useful examples of how to use activate
 	end
 	
 	# activate
-	hanadb_regi "Activate package mypackage.app and it's sub packages" do
+	hana_regi "Activate package mypackage.app and it's sub packages" do
 		workspace_path "#{regi_workspace}"
 		force true
 		packages "mypackage.app"
@@ -495,7 +495,7 @@ Some useful examples of how to use activate
 	end
 	
 	# activate
-	hanadb_regi "Activate all tracked objects" do
+	hana_regi "Activate all tracked objects" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object_type "trackedPackages"
@@ -503,7 +503,7 @@ Some useful examples of how to use activate
 	end
 	
 	# activate
-	hanadb_regi "Activate all inactive objects" do
+	hana_regi "Activate all inactive objects" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object_type "inactiveObjects"
@@ -512,7 +512,7 @@ Some useful examples of how to use activate
 	
 	
 	# activate
-	hanadb_regi "Activate a file" do
+	hana_regi "Activate a file" do
 		workspace_path "#{regi_workspace}"
 		force true
 		object "/my/path/to/a/tracked/file"
@@ -520,7 +520,7 @@ Some useful examples of how to use activate
 	end
 
 ---
-Real world full examples of hanadb resources
+Real world full examples of hana resources
 ===============
 
 ### Create regi workspace, use regi .. then remove the store and the workspace
@@ -528,32 +528,32 @@ Real world full examples of hanadb resources
 #### Usage
 
 	# create new store
-	hanadb_hdbuserstore "buildkey" do
+	hana_hdbuserstore "buildkey" do
 		username "SYSTEM"
 		password "#{node['hana']['password']}"
 		action :set
 	end
 	
 	# create the repository workspace
-		hanadb_regi "create workspace" do
+		hana_regi "create workspace" do
 		path regi_workspace
 		key "buildkey"
 		action :create_workspace
 	end
 
 	#### use regi to activate all inactive objects
-	hanadb_regi "Activate inactive objects for example added attribute views" do
+	hana_regi "Activate inactive objects for example added attribute views" do
 		workspace_path "#{regi_workspace}"
 		object_type "inactiveObjects"
 		action :activate
 	end	
 
 	# remove store
-	hanadb_hdbuserstore "buildkey" do
+	hana_hdbuserstore "buildkey" do
 		action :delete
 	end
 
-	hanadb_regi "Delete workspace" do
+	hana_regi "Delete workspace" do
 		workspace_path "#{regi_workspace}"
 		action :delete_workspace
 	end	
@@ -562,7 +562,7 @@ Real world full examples of hanadb resources
 
 #### Usage
 
-	hanadb_hdbsql "Check number of documents in the view" do
+	hana_hdbsql "Check number of documents in the view" do
 		sql_command "SELECT count(distinct \"id\") as count FROM \"_SYS_BIC\".\"your_package/AV_YOUR_VIEW_NAME\""
 		print_sql_commands false
 		print_table_header false			
@@ -575,37 +575,37 @@ Real world full examples of hanadb resources
 #### Usage
 
 	# create new store
-	hanadb_hdbuserstore "buildkey" do
+	hana_hdbuserstore "buildkey" do
 		username "SYSTEM"
 		password "#{node['hana']['password']}"
 		action :set
 	end
 	
 	# create the repository workspace
-		hanadb_regi "create workspace" do
+		hana_regi "create workspace" do
 		path regi_workspace
 		key "buildkey"
 		action :create_workspace
 	end
 
-	hanadb_regi "Import INA UI Toolkit delivery unit" do
+	hana_regi "Import INA UI Toolkit delivery unit" do
 		delivery_unit_path "#{node['hana']['installpath']}/#{node['hana']['sid']}/global/hdb/content/HCO_INA_UITOOLKIT.tgz"
 		workspace_path "#{regi_workspace}"
 		action :import_delivery_unit
 	end
 
-	hanadb_regi "Import INA Service delivery unit" do
+	hana_regi "Import INA Service delivery unit" do
 		delivery_unit_path "#{node['hana']['installpath']}/#{node['hana']['sid']}/global/hdb/content/HCO_INA_SERVICE.tgz"
 		workspace_path "#{regi_workspace}"
 		action :import_delivery_unit
 	end
 
 	# remove store
-	hanadb_hdbuserstore "buildkey" do
+	hana_hdbuserstore "buildkey" do
 		action :delete
 	end
 
-	hanadb_regi "Delete workspace" do
+	hana_regi "Delete workspace" do
 		workspace_path "#{regi_workspace}"
 		action :delete_workspace
 	end
@@ -622,7 +622,7 @@ Real world full examples of hanadb resources
 		  group "root"
 		end
 
-		hanadb_hdbsql "hanadb_hdbsql from file - #{file}" do
+		hana_hdbsql "hana_hdbsql from file - #{file}" do
 			sql_file_path "#{temp_dir}/#{file}"
 			username "#{node['yourapp']['your-user-name']}"
 			password "#{node['yourapp']['your-user-password']}"
