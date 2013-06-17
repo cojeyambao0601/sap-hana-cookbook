@@ -6,6 +6,15 @@ define :server, :exe => "" do
     hana_install_command = "#{params[:exe]}"
   end
 
+  # check if a custom install path is defined - if yes, we create the dir to be sure
+  if "#{node['hana']['installpath']}" != ""
+    Chef::Log.info "a custom install path #{node['hana']['installpath']} is defined and will be created if not there yet"
+    directory node['hana']['installpath'] do
+      recursive true
+      action :create
+    end
+  end
+
   # check if a custom data path is defined - if yes, we add the corresponding option to the installer
   if "#{node['hana']['datapath']}" != ""
     Chef::Log.info "a custom data path #{node['hana']['datapath']} is defined and will be used for the installation"
