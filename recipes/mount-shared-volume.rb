@@ -26,7 +26,7 @@ ruby_block "Check NFS server export" do
   result = system check_export_cmd
   while !result && ((curr_try += 1) <= node['hana']['dist']['waitcount'])
 
-    Chef::Log.info "Sleeping for #{node['hana']['dist']['waittime']} seconds waiting for the installation of the master to finish ..."
+    Chef::Log.info "Sleeping for #{node['hana']['dist']['waittime']} seconds waiting for the shared volume to become available ..."
 
     # wait for the nfs export to be available
     sleep node['hana']['dist']['waittime']
