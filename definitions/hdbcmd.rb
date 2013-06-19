@@ -21,6 +21,11 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
     command "chmod +x SAPCAR && ./SAPCAR -xvf SAP_HANA_PACKAGE.SAR"
   end
 
+  execute "Delete the installer archive to save some disk space" do
+    cwd "#{node['install']['tempdir']}"
+    command "rm -f SAP_HANA_PACKAGE.SAR"
+  end
+
   execute "Start install / upgrade HANA server / client" do
     cwd "#{node['install']['tempdir']}/#{params[:bin_dir]}"
     command "#{params[:exe]}"

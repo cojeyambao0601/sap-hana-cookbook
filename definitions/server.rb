@@ -1,7 +1,7 @@
 define :server, :exe => "" do
 
   if "#{node['hana']['checkhardware']}".chomp != "true"
-    hana_install_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{params[:exe]} --ignore=check_platform,check_diskspace,check_min_mem"
+    hana_install_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{params[:exe]} --ignore=#{node['hana']['checkstoignore']}"
   else
     hana_install_command = "#{params[:exe]}"
   end
