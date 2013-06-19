@@ -24,6 +24,7 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 * `['hana'].['password']` - SIDadm's password
 * `['hana'].['syspassword']` - password for database user SYSTEM
 * `['hana'].['checkhardware']` - flag to circumvent SAP's check, whether the used hardware is certified and meets certain requirements. Bear in mind that this is **not** meant for production systems, and don't expect any support.
+* `['hana'].['checkstoignore']` - installer checks to be ignored if the checkhardware flag is disabled
 * `['hana'].['clientsid']` - flag to specify a stand-alone Hana client installation (see below)
 
 #### Attributes related to the installation process.
