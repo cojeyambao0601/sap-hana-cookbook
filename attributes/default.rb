@@ -12,8 +12,8 @@ default['hana']['clientsid']     = "true"
 # needed for distributed hana cluster
 default['hana']['dist']['sharedvolume']        = ""
 default['hana']['dist']['sharedmountoptions']  = ""
-default['hana']['dist']['waitcount']           = 3
-default['hana']['dist']['waittime']            = 3
+default['hana']['dist']['waitcount']           = 5
+default['hana']['dist']['waittime']            = 5
 
 
 default['install']['tempdir']             = "/monsoon/tmp"

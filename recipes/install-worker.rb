@@ -31,7 +31,7 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
     # if it does not get available after waiting "waitcount" times
     # "waittime" seconds, raise an exception
     if (curr_try == (node['hana']['dist']['waitcount'] += 1 ))
-      raise "Gave up waiting for install finished file #{install_finished_file} to be created. Check the master installation."	
+      raise "Gave up waiting for install finished file #{install_finished_file} to be created. Please check the master installation."	
       end
     end
   end

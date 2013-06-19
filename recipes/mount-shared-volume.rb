@@ -36,7 +36,7 @@ ruby_block "Check NFS server export" do
   # if it does not get available after waiting "waitcount" times
   # "waittime" seconds, raise an exception
   if (curr_try == (node['hana']['dist']['waitcount'] += 1))
-    raise "Gave up waiting for install finished file #{install_finished_file} to be created. Check the master installation."
+    raise "Gave up waiting for the shared volume export of #{node['hana']['dist']['sharedvolume']} to become available. Please check the the shared volume setup."
     end
   end
 end
