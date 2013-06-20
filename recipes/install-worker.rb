@@ -38,9 +38,7 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
 
   # build hana install command
   hana_install_worker_command = "./hdbaddhost --batch --sid=#{node['hana']['sid']} --hostname=#{node[:hostname]} --sapmnt=#{node['hana']['installpath']} --password=#{node['hana']['password']} --role=worker"
-  Chef::Log.info "checkhardware 01: #{node['hana']['checkhardware']}"
-  log "checkhardware 02: #{node['hana']['checkhardware']}"
-  if "#{node['hana']['checkhardware']}".chomp == "true"
+  if "#{node['hana']['checkhardware']}".chomp != "true"
     hana_install_worker_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{hana_install_worker_command} --ignore=#{node['hana']['checkstoignore']}"
   end
 
