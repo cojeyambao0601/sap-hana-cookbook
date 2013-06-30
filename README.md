@@ -192,6 +192,10 @@ To use hana_runsql command, you must specify the following parameters:
 * output_file_path
    - if set, will write the command output to a file instead of writing it to stdout
    - defaults to none, which means that the outout will be sent to stdout
+* expected_exit_codes
+	- allowed  exit codes   ,otherwise it is an error
+	- array of exit code in format [n,n]
+	
 #### Examples
 
 To run a SQL command directly:
@@ -221,6 +225,14 @@ To execute a SQL command, and write output to a file without table headers or th
 		password "YOUR-HANA-USER-PASSWORD"
 	end
 
+To execute a drop user for unexisting user
+	hana_hdbsql "drop user" do
+		sql_command "DROP USER \"YOUR_USER_NAME\" CASCADE"
+		username "YOUR-HANA-USER-NAME"
+		password "YOUR-HANA-USER-PASSWORD"
+		expected_exit_codes [76,0] #invalid user name
+	end
+	
 ### hana\_hdbuserstore
 
 #### Description

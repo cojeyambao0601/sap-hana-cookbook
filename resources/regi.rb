@@ -3,8 +3,6 @@ actions :create_workspace, :delete_workspace,
         :track_package, :untrack_package, :delete_package,
         :checkout, :commit, :revert, :activate
         
-default_action :create_workspace
-
 attribute :name, :name_attribute => true
 
 # this will containt the path to the regi workspace on the local file system

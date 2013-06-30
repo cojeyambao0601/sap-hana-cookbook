@@ -22,6 +22,14 @@ def output_file_path
     return res
 end
 
+def expected_exit_codes
+    res = [0]
+    if !@new_resource.expected_exit_codes.nil?
+        res = @new_resource.expected_exit_codes
+    end
+    return res
+end
+
 action :run do
 
     command_to_execute = "#{node[:hana][:installpath]}/hdbclient/hdbsql" + print_sql_commands + print_table_header + "-n #{@new_resource.host} -i #{@new_resource.instance_number} -m -u #{@new_resource.username} -p"
@@ -42,6 +50,7 @@ action :run do
 
     execute "Running hdbsql command - #{command_for_logging}" do
       command "#{command_to_execute}"
+			returns expected_exit_codes
     end
 
 end
