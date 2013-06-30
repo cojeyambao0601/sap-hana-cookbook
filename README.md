@@ -225,7 +225,8 @@ To execute a SQL command, and write output to a file without table headers or th
 		password "YOUR-HANA-USER-PASSWORD"
 	end
 
-To execute a drop user for unexisting user
+To execute a drop user for unexisting user:
+
 	hana_hdbsql "drop user" do
 		sql_command "DROP USER \"YOUR_USER_NAME\" CASCADE"
 		username "YOUR-HANA-USER-NAME"
