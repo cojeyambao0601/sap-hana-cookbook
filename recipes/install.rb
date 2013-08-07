@@ -11,7 +11,7 @@ end
 # check if any hana installation was done already
 if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/install.finished")
 
-  hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} --number=#{node['hana']['instance']} --password=#{node['hana']['password']} --system_user_password=#{node['hana']['syspassword']} --autostart=on --shell=/bin/sh --userid=#{node['hana']['userid']} --import_content=off --sapmnt=#{node['hana']['installpath']}"
+  hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} --number=#{node['hana']['instance']} --password=#{node['hana']['password']} --system_user_password=#{node['hana']['syspassword']} --autostart=on --shell=/bin/sh --userid=#{node['hana']['userid']} --import_content=#{node['hana']['import_content']} --sapmnt=#{node['hana']['installpath']}"
 
   server "run install hana node" do
     exe "#{hana_install_command}"
