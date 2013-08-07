@@ -41,6 +41,7 @@ The structure of ['install'].['files'].['hanadb'] archive must be a sole folder 
 
 * `['hana'].['dist'].['sharedvolume']` - the nfs path (i.e server:/path) to the shared disk where the HANA will be installed including the data files and the log files. Only NFS shares are supported now. This attribute should be either an empty string or not set at all in case of a single node installation.
 * `['hana'].['dist'].['sharedmountoptions']` - The NFS share options.
+* `['hana'].['dist'].['master-mode-required']` - Only required for distributed installs with newer HANA versions - see the comments in the enable-master-mode.rb recipe.
 * `['hana'].['dist'].['waitcount']` - The number of wait loops for the NFS share to be available. Needed in case of distributed installation where the NFS share is being created in parallel to the SAP Hana node installations. Usually keep the defaults.
 * `['hana'].['dist'].['waittime']` - How much time each loop will wait. Usually keep the defaults.
 
