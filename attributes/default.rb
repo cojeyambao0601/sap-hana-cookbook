@@ -9,6 +9,7 @@ default['hana']['syspassword']    = "Start1234"
 default['hana']['checkhardware']  = "true"
 default['hana']['checkstoignore'] = "check_platform,check_diskspace,check_min_mem"
 default['hana']['clientsid']      = "true"
+default['hana']['import_content'] = "off"
 
 # needed for distributed hana cluster
 default['hana']['dist']['sharedvolume']        = ""
