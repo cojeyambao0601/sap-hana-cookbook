@@ -1,5 +1,5 @@
-maintainer       "Harald Kuersten"
-maintainer_email "harald.kuersten@sap.com"
+maintainer       "Andreas Bloemeke, Thomas Graichen, Harald Kuersten"
+maintainer_email "andreas.bloemeke@sap.com, thomas.graichen@sap.com, harald.kuersten@sap.com"
 license          ""
 description      "Install/upgrade SAP Hana and SAP Hana client"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))

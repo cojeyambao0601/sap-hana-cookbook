@@ -15,7 +15,7 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 
 #### Attributes related to SAP Hana instance configuration.
 
-* `['hana'].['installpath']` - the directory into which SAP Hana will be installed. If this is overridden to something other than **/usr/sap**, then /usr/sap will be symlinked to the chosen location. **ATTENTION:** an existing directory /usr/sap will be DELETED before symlink is created!
+* `['hana'].['installpath']` - the directory into which SAP Hana will be installed.
 * `['hana'].['datapath']` - custom path for the data files, empty by default
 * `['hana'].['logpath']` - custom path for the data files, empty by default
 * `['hana'].['sid']` - the SID of the installation
@@ -26,6 +26,7 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 * `['hana'].['checkhardware']` - flag to circumvent SAP's check, whether the used hardware is certified and meets certain requirements. Bear in mind that this is **not** meant for production systems, and don't expect any support.
 * `['hana'].['checkstoignore']` - installer checks to be ignored if the checkhardware flag is disabled
 * `['hana'].['clientsid']` - flag to specify a stand-alone Hana client installation (see below)
+* `['hana'].['import_content']` - flag to specify if HanaXS (default development) content will be imported while installation and/or upgrade
 
 #### Attributes related to the installation process.
 * `['install'].['tempdir']` - temporary directory needed during installation
