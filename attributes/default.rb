@@ -20,5 +20,8 @@ default['hana']['dist']['waittime']             = 5
 
 default['install']['tempdir']             = "/monsoon/tmp"
 default['install']['files']['sapcar']     = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
+default['install']['files']['saphostagent'] = "http://i806857-suse.dhcp.phl.sap.corp:1080/repo/saphostagent/7.2SP160/SAPHOSTAGENT.SAR"
 default['install']['files']['hanadb']     = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/1.0.55/SAP_HANA_DATABASE100_55_Linux_on_x86_64.SAR"
 default['install']['files']['hanaclient'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/1.0.55/SAP_HANA_CLIENT100_55_Linux_on_x86_64.SAR"
+default['install']['files']['hanalifecyclemngr'] = "http://i806857-suse.dhcp.phl.sap.corp:1080/repo/hana/SAPHANALM06P_2.SAR"
+

@@ -31,8 +31,10 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 #### Attributes related to the installation process.
 * `['install'].['tempdir']` - temporary directory needed during installation
 * `['install'].['files'].['sapcar']` - URL to the SAPCAR tool (for extracting SAR files)
+* `['install'].['files'].['saphostagent']` - URL to the SAR file for the SAP Host Agent
 * `['install'].['files'].['hanadb']` - URL to the SAR file for the Hana installer
 * `['install'].['files'].['hanaclient']` - URL to the SAR file for the Hana client installer
+* `['install'].['files'].['hanalifecyclemngr']` - URL to the SAR file for the Hana lifecycle manager installer
 
 All attributes under ['install'].['files'] hierarchy, must be accessible by http get method from the node on which the installation is executed.
 The structure of ['install'].['files'].['hanadb'] archive must be a sole folder named SAP_HANA_DATABASE and all installation files in it.
@@ -69,6 +71,9 @@ As with the **[hana::install-client]** recipe, the node attribute `['hana']['cli
 
 ### hana::install-worker
 Recipe to add a worker node to existing SAP Hana distributed cluster. To use this recipe you must provide the shared storage information by overriding the attribute ['hana'].['dist'].['sharedvolume']. See examples of distributed installation below.
+
+### hana::install-lifecyclemngr
+Installs SAP Hana lifecycle manager on the node. The lifecycle manager will be installed into `['hana']['installpath']`/`['hana']['sid']`/HLM. The lifecycle manager is dependent on an installed SAP Hana and will trigger an install if SAP Hana does not exist. 
 
 ---
 Usage
@@ -108,6 +113,17 @@ To install SAP Hana client on a node, use the following role:
 	)
 
 	run_list "recipe[hana::install-client]"
+
+### SAP Hana lifecycle manager on a node
+For installing SAP Hana lifecycle manager on a node in your landscape, add the **[hana::install-lifecyclemngr]** recipe to the node's run list.
+
+#### Example
+To install SAP Hana lifecycle manager on a node, use the following role:
+
+	name "hana-install-lifecyclemngr"
+	description "Role for installing SAP Hana lifecyclemanager"
+
+	run_list "recipe[hana::install-lifecyclemngr]"
 
 ### Updrading existing SAP Hana installations
 The recipes **[hana::upgrade]** and **[hana::upgrade-client]** - as the names imply - will upgrade an existing SAP Hana and SAP Hana client, respectively.  
