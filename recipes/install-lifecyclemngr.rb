@@ -20,7 +20,7 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmc
     command "wget #{node['install']['files']['saphostagent']} -O SAPHOSTAGENT.SAR"
   end
 
-  execute "Get Hana binary package" do
+  execute "Get Hana lifecycle manager archive" do
     cwd "#{node['install']['tempdir']}/archives"
     command "wget #{node['install']['files']['hanalifecyclemngr']} -O SAPHANALM.SAR"
   end
@@ -28,9 +28,8 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmc
   hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} --hlm_archive=#{node['install']['tempdir']}/archives/SAPHANALM.SAR --host_agent_package=#{node['install']['tempdir']}/archives/SAPHOSTAGENT.SAR"
 
   hdbcmd "run install of hana lifecycle manager" do
-    exe "#{hana_install_command}"
-    bin_dir "SAP_HANA_LM"
-    bin_file_url "#{node['install']['files']['hanalifecyclemngr']}"
+    exe hana_install_command
+    bin_file_url node['install']['files']['hanalifecyclemngr']
   end
 
 else
