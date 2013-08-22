@@ -132,7 +132,8 @@ Assuming we have NFS share exported on your-nfs-node.yourdomain.com:/some/export
 		}
 	)
 
-	run_list "recipe[hana::install]"
+	run_list "recipe[hana::install]",
+	         "recipe[hana::enable-master-mode]"
 
 This will mount the sharedvolume on your loclal installpath "/your/path/hana" and install the master SAP Hana database instance in it.
 Then use the following role to add new worker nodes to the cluster:
