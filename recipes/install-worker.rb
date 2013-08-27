@@ -22,15 +22,16 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
     install_finished_file = "#{node['hana']['installpath']}/#{node['hana']['sid']}/install.finished"
 
     curr_try = 0
-    while (!File.exist?("#{install_finished_file}")) && ((curr_try += 1) <= node['hana']['dist']['waitcount'])
+    while (!File.exist?("#{install_finished_file}")) && (curr_try < node['hana']['dist']['waitcount'])
       # wait for the master node to finish installation
+      curr_try = curr_try + 1
       Chef::Log.info "Sleeping for #{node['hana']['dist']['waittime']} seconds waiting for the installation of the master to finish ..."
       sleep node['hana']['dist']['waittime']
     end
 
     # if it does not get available after waiting "waitcount" times
     # "waittime" seconds, raise an exception
-    if (curr_try == (node['hana']['dist']['waitcount'] += 1 ))
+    if (curr_try == (node['hana']['dist']['waitcount']))
       raise "Gave up waiting for install finished file #{install_finished_file} to be created. Please check the master installation."	
       end
     end
