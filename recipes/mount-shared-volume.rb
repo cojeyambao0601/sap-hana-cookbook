@@ -24,8 +24,8 @@ ruby_block "Check NFS server export" do
 
   curr_try = 0
   result = system check_export_cmd
-  while !result && ((curr_try += 1) <= node['hana']['dist']['waitcount'])
-
+  while !result && (curr_try < node['hana']['dist']['waitcount'])
+    curr_try = curr_try + 1
     Chef::Log.info "Sleeping for #{node['hana']['dist']['waittime']} seconds waiting for the shared volume to become available ..."
 
     # wait for the nfs export to be available
@@ -35,7 +35,8 @@ ruby_block "Check NFS server export" do
 
   # if it does not get available after waiting "waitcount" times
   # "waittime" seconds, raise an exception
-  if (curr_try == (node['hana']['dist']['waitcount'] += 1))
+    if (curr_try == (node['hana']['dist']['waitcount']))
+     
     raise "Gave up waiting for the shared volume export of #{node['hana']['dist']['sharedvolume']} to become available. Please check the the shared volume setup."
     end
   end
