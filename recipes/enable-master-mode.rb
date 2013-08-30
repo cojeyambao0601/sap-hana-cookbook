@@ -12,7 +12,7 @@ log "Running #{File.basename(__FILE__)} recipe:"
 
 adminuser = node['hana']['sid'].downcase + "adm"
 
-bash "enable the special master mode for hana distributed installs" do only_if { node['hana']['dist']['master-mode-required'] }
+bash "enable the special master mode for hana distributed installs" do only_if { node['hana']['dist']['master-mode-required'] == "true" }
 code <<-EOH
 su --login #{adminuser} -c "hdbnsutil -reconfig --hostnameResolution=global"
 EOH

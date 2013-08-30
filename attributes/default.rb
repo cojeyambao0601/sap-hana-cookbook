@@ -12,11 +12,11 @@ default['hana']['clientsid']      = "true"
 default['hana']['import_content'] = "off"
 
 # needed for distributed hana cluster
-default['hana']['dist']['sharedvolume']        = ""
-default['hana']['dist']['sharedmountoptions']  = ""
-default['hana']['master-mode-required']        = "false"
-default['hana']['dist']['waitcount']           = 5
-default['hana']['dist']['waittime']            = 5
+default['hana']['dist']['sharedvolume']         = ""
+default['hana']['dist']['sharedmountoptions']   = ""
+default['hana']['dist']['master-mode-required'] = "false"
+default['hana']['dist']['waitcount']            = 5
+default['hana']['dist']['waittime']             = 5
 
 default['install']['tempdir']             = "/monsoon/tmp"
 default['install']['files']['sapcar']     = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
