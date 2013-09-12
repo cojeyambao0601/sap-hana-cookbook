@@ -17,7 +17,7 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 
 * `['hana'].['installpath']` - the directory into which SAP Hana will be installed.
 * `['hana'].['datapath']` - custom path for the data files, empty by default
-* `['hana'].['logpath']` - custom path for the data files, empty by default
+* `['hana'].['logpath']` - custom path for the log files, empty by default
 * `['hana'].['sid']` - the SID of the installation
 * `['hana'].['instance']` - the instance number of the installation
 * `['hana'].['userid']` - UID of the user SIDadm, which will be created during installation
