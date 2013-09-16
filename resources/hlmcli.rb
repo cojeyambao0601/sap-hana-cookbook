@@ -6,7 +6,7 @@ attribute :archive_path , :kind_of => String
 
 #Proxy
 attribute :use_proxy , :kind_of => [ TrueClass, FalseClass ], :default => true
-attribute :proxy_host, :kind_of => String, :default => "proxy"
+attribute :proxy_host, :kind_of => String, :default => "proxy.wdf.sap.corp"
 attribute :proxy_port, :kind_of => Fixnum, :default => 8080
 
 #Service Marketplace
