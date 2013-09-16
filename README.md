@@ -639,7 +639,7 @@ Add AFL SDA or LCA
         archive_path "/tmp/IMDB_AFL100_60.SAR"
     end
 
-Apply support pack(s) (note: archive_path is a directory not a file)
+Apply support pack(s) (note: archive_path is a directory not a file and must contain the stack.xml and support packs)
 
     hana_hlmcli "Apply sp update" do
         action :apply_sp

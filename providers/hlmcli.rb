@@ -29,7 +29,7 @@ action :update_hlm do
 end
 
 action :apply_sp do
-	command_string = "apply_single_support_package --confirm_dialog true  --update_source #{@new_resource.update_source} --instance_Nr #{node['hana']['instance']} --db_user SYSTEM --db_pwd #{node['hana']['syspassword']} "
+	command_string = "apply_support_package_stack --confirm_dialog true  --update_source #{@new_resource.update_source} --instance_Nr #{node['hana']['instance']} --db_user SYSTEM --db_pwd #{node['hana']['syspassword']} "
 
 	if @new_resource.update_source.eql? "marketplace" 
 		 command_string = command_string + "--use_proxy #{@new_resource.use_proxy} --proxy_host #{@new_resource.proxy_host}  --proxy_port #{@new_resource.proxy_port} --smp_user #{@new_resource.smp_user} --smp_pwd #{@new_resource.smp_pass}"
