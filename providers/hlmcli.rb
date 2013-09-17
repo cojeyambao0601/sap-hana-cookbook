@@ -72,7 +72,7 @@ action :add_system do
     group "sapsys"
     action :create
     recursive true
-		not_if ::File.directory? datapath
+		not_if { ::File.directory?(datapath) }
   end
 	directory logpath do
     mode "664"
@@ -80,7 +80,7 @@ action :add_system do
     group "sapsys"
     action :create
     recursive true
-		not_if ::File.directory? logpath
+		not_if { ::File.directory?(logpath) }
   end
 
 	command_string = "add_hana_system --dvdpath #{@new_resource.archive_path} --new_system_sid #{@new_resource.target_sid} --sapmntpath #{node['hana']['installpath']} --instance_number #{@new_resource.target_instance} --memory_configuration #{@new_resource.target_memory} --datapath " + datapath + " --logpath " + logpath + " --master_password #{@new_resource.target_pass}"
