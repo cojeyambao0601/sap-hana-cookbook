@@ -1,4 +1,4 @@
-actions :update_hlm, :add_afl, :add_lca, :add_sda, :apply_sp, :deploy_content, :add_host, :add_system, :remove_host
+actions :update_hlm, :add_afl, :add_lca, :add_sda, :apply_sp, :deploy_content, :add_host, :add_system, :remove_host, :rename
 
 #Sources
 attribute :update_source, :kind_of => String, :default => "marketplace", :equal_to => ["marketplace", "inbox"]

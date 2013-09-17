@@ -94,6 +94,39 @@ action :remove_host do
 	hlmcli(command_string)
 end
 
+action :rename do
+  # keep current sid, hostname, and sysnr if not set
+	if @new_resource.target_sid.nil?
+		new_sid = node['hana']['sid']
+	else
+		new_sid = @new_resource.target_sid
+		Chef::Log.warn("HLM will be disconnected during the SID change, recipe will ignore ANY error.")
+		force = TRUE
+	end
+	if @new_resource.hostname.nil?
+		new_host = node['hostname']
+	else
+		new_host = @new_resource.hostname
+	end
+	if @new_resource.target_instance.nil?
+		new_sysnr = node['hana']['instance']
+	else
+		if @new_resource.target_instance < 10
+			new_sysnr = "0#{@new_resource.target_instance}"
+		else
+			new_sysnr = @new_resource.target_instance
+		end
+	end
+	
+	command_string = "rename_hana_system --target_password #{node['hana']['password']} --target_sid #{new_sid} --hostname #{new_host} --external_hostname #{new_host} --number #{new_sysnr}"
+	
+	if force
+		hlmcli_force(command_string)
+	else
+		hlmcli(command_string)
+	end
+end
+
 # basics of the hlmcli command
 def hlmcli(operation)
 	# before doing anything make sure the cli exists
@@ -105,5 +138,20 @@ def hlmcli(operation)
 		cwd "#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmcli"
 		user #{node['hana']['sid'].downcase}adm
 		command "./hlmcli.sh --sid #{node['hana']['sid']} --sidadm_pwd #{node['hana']['password']} #{operation}"
+	end
+end
+
+# Run the hlmcli command and ignore errors
+def hlmcli_force(operation)
+	# before doing anything make sure the cli exists
+	if !::File.exist?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmcli/hlmcli.sh")
+		raise "HANA Lifecycle Manager is not installed."
+	end
+	
+	execute "Execute HLM command line" do
+		cwd "#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmcli"
+		user #{node['hana']['sid'].downcase}adm
+		command "./hlmcli.sh --sid #{node['hana']['sid']} --sidadm_pwd #{node['hana']['password']} #{operation}"
+		returns [0,1]
 	end
 end

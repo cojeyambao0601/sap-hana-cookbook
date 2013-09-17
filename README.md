@@ -560,13 +560,13 @@ Applications or other cookbooks can use the hana_hlmcli resource to run HANA Lif
 
 #### Usage
 
-The hana_hlmcli resource has 9 actions: update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, add_system, and remove_host.
+The hana_hlmcli resource has 10 actions: update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, add_system, remove_host, and rename.
 
-The update_hlm action is used to update the HANA Lifecycle Manager. The add_afl action is used to install the HANA Application Function Library. The add_lca action is used to install the HANA liveCache Applications. The add_sda action is used to install the HANA Smart Data Access. The apply_sp is used to apply HANA support packages. The deploy_content action is used to deploy HANA Applications Content. The add_host action is used to add another server to a distributed HANA system. The remove_host action is used to remove a server from a distributed HANA system. The add_system action is used to add another HANA installation to the same server.
+The update_hlm action is used to update the HANA Lifecycle Manager. The add_afl action is used to install the HANA Application Function Library. The add_lca action is used to install the HANA liveCache Applications. The add_sda action is used to install the HANA Smart Data Access. The apply_sp is used to apply HANA support packages. The deploy_content action is used to deploy HANA Applications Content. The add_host action is used to add another server to a distributed HANA system. The remove_host action is used to remove a server from a distributed HANA system. The add_system action is used to add another HANA installation to the same server. The rename action is used to change the hostname, SID, and/or system number of the HANA installation.
 
 Here are the accepted arguments:
 * action
-   - Action, can be update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, add_system, or remove_host. 
+   - Action, can be update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, add_system, remove_host, or rename. 
    - no default action is set
    - optional
 * update_source
@@ -600,7 +600,7 @@ Here are the accepted arguments:
    - needed by add_host
 * hostname
    - Hostname of additional server
-   - needed by add_host and remove_host
+   - needed by add_host, remove_host, and optionally rename
 * role
    - Role of additional server
    - can be _worker_ or _slave_
@@ -610,10 +610,10 @@ Here are the accepted arguments:
    - needed by add_host and add_system
 * target_sid
    - The new system id
-   - needed by add_system
+   - needed by add_system, and optionally rename
 * target_instance
    - The new system instance number
-   - needed by add_system
+   - needed by add_system, and optionally rename
 * target_datapath and target_logpath
    - The path for the data and log directories of the new system
    - defaults to the HANA install defaults
@@ -681,6 +681,19 @@ Remove additional HANA server
     hana_hlmcli "Remove node" do
         action :remove_host
         hostname "someserver.wdf.sap.corp"
+    end
+	
+Change hostname, sid, or sysnr of HANA server
+
+    hana_hlmcli "Change HANA SID" do
+        action :rename
+        target_sid "NDB"
+    end
+	
+	hana_hlmcli "Change HANA Hostname & Sysnr" do
+        action :rename
+        hostname "someserver.wdf.sap.corp"
+		target_instance "33"
     end
 	
 ---
