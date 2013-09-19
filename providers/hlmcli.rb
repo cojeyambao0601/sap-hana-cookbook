@@ -53,37 +53,58 @@ action :add_host do
 end
 
 action :add_system do
-	#build default log and data path if none is provided
-	if @new_resource.target_datapath.nil?
-		datapath = "#{node['hana']['installpath']}/#{@new_resource.target_sid}/global/hdb/data"
-	else
-		datapath = @new_resource.target_datapath
-	end
-	if @new_resource.target_logpath.nil?
-		logpath = "#{node['hana']['installpath']}/#{@new_resource.target_sid}/global/hdb/log"
-	else
-		logpath = @new_resource.target_logpath
+	# java is required for HLM to complete this task
+	package "java-1_7_0-ibm"
+		unless system('which java')
 	end
 	
-	#create data and log dirs if they dont exist
-	directory datapath do
-    mode "664"
-    owner #{node['hana']['sid'].downcase}adm
-    group "sapsys"
-    action :create
-    recursive true
-		not_if { ::File.directory?(datapath) }
+	#build default log and data path if none is provided
+	if @new_resource.target_datapath.nil?
+		_datapath = "#{node['hana']['installpath']}/#{@new_resource.target_sid}/global/hdb/data"
+	else
+		_datapath = @new_resource.target_datapath
+	end
+	if @new_resource.target_logpath.nil?
+		_logpath = "#{node['hana']['installpath']}/#{@new_resource.target_sid}/global/hdb/log"
+	else
+		_logpath = @new_resource.target_logpath
+	end
+	
+	#will be using sidadm a lot so setting it as a variable
+	_sidadm = "#{@new_resource.target_sid}adm".downcase
+	
+	#create the sidadm user
+	user _sidadm do
+      gid "sapsys"
+      shell "/bin/sh"
+      comment "SAP HANA Database System Administrator"
+      home "/usr/sap/"+new_resource.target_sid+"/home"
   end
-	directory logpath do
-    mode "664"
-    owner #{node['hana']['sid'].downcase}adm
+	
+	#set sidadm password (lazy way)
+	execute "Set sidadm pass" do
+		command "echo '"+new_resource.target_pass+"' | passwd --stdin #{_sidadm}"
+	end
+		
+	#create data and log dirs if they dont exist
+	directory _datapath do
+    mode "750"
+    owner _sidadm
     group "sapsys"
     action :create
     recursive true
-		not_if { ::File.directory?(logpath) }
+		not_if { ::File.directory?(_datapath) }
+  end
+	directory _logpath do
+    mode "775"
+    owner _sidadm
+    group "sapsys"
+    action :create
+    recursive true
+		not_if { ::File.directory?(_logpath) }
   end
 
-	command_string = "add_hana_system --dvdpath #{@new_resource.archive_path} --new_system_sid #{@new_resource.target_sid} --sapmntpath #{node['hana']['installpath']} --instance_number #{@new_resource.target_instance} --memory_configuration #{@new_resource.target_memory} --datapath " + datapath + " --logpath " + logpath + " --master_password #{@new_resource.target_pass}"
+	command_string = "add_hana_system --dvdpath #{@new_resource.archive_path} --new_system_sid #{@new_resource.target_sid} --sapmntpath #{node['hana']['installpath']} --instance_number #{@new_resource.target_instance} --memory_configuration #{@new_resource.target_memory} --datapath " + _datapath + " --logpath " + _logpath + " --master_password #{@new_resource.target_pass}"
 	
 	hlmcli(command_string)
 end

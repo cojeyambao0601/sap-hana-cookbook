@@ -661,7 +661,7 @@ Add another server to HANA system
         hostname "someserver.wdf.sap.corp"
         role "worker"
         sapadm_pass "ChangeMe"
-        target_memory 20480
+        target_memory "20480"
     end
 
 Add another HANA instance to the same server (note: archive_path is the location of the HANA install DVD)
