@@ -110,9 +110,68 @@ action :add_system do
 end
 
 action :remove_host do
-	command_string = "remove_host --removehost_hostname #{@new_resource.hostname}"
+	#node.set[:hlmcli][:reorg_finish] = 1
+	_command_string = "remove_host --removehost_hostname #{@new_resource.hostname}"
 	
-	hlmcli(command_string)
+	run_context.include_recipe "hana::install-client"
+	
+	# Create and run hdbsql commands
+	_hdbsql_content = "CALL SYS.UPDATE_LANDSCAPE_CONFIGURATION('SET REMOVE','"+new_resource.hostname.split('.')[0]+"');\n"
+	_hdbsql_content = _hdbsql_content+"CALL REORG_GENERATE(2,'');\n"
+	_hdbsql_content = _hdbsql_content+"CALL REORG_EXECUTE(?);\n"	
+	
+	file "/tmp/hdbsql_hostremove" do
+		content _hdbsql_content
+		action :create
+	end
+	
+	hana_hdbsql "flag-host-as-removed" do
+		sql_file_path "/tmp/hdbsql_hostremove"
+		instance_number "#{node['hana']['instance']}"
+		username "SYSTEM"
+		password node['hana']['syspassword']
+	end
+	
+	# verify reorg is finished
+	_hdbsql_command = "#{node[:hana][:installpath]}/hdbclient/hdbsql -i #{node['hana']['instance']} -x -u SYSTEM -p #{node['hana']['syspassword']} 'SELECT REMOVE_STATUS FROM m_landscape_host_configuration'"
+	ruby_block "verify-reorg" do
+		block do
+			_reorg_finish = 0
+			for i in 1..6
+				Chef::Log.info("Checking system reorganization status.")
+
+				_grep = Mixlib::ShellOut.new("#{_hdbsql_command} | grep 'REORG FINISHED'")
+				_grep.run_command
+				Chef::Log.debug("RC:#{_grep.exitstatus} - "+_grep.stdout)
+				if _grep.exitstatus == 0
+					_reorg_finish = 1
+					break
+				end
+				sleep 10
+			end
+			if _reorg_finish == 1
+				self.notifies :run, resources(:ruby_block => "run-hlmcli-command"), :immediately
+			else
+				self.notifies :run, resources(:ruby_block => "handle-reorg-status"), :immediately
+			end
+		end
+		subscribes :run, resources(:hana_hdbsql  => "flag-host-as-removed")
+		notifies :delete, "file[/tmp/hdbsql_hostremove]", :immediately
+	end
+	
+	ruby_block "handle-reorg-status" do
+		block do
+			raise "Table reorg did not finish, unsafe to remove host."
+		end
+		action :nothing
+	end
+	
+	ruby_block "run-hlmcli-command" do
+		block do
+			hlmcli(_command_string)
+		end
+		action :nothing
+	end
 end
 
 action :rename do
