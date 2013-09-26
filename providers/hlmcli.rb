@@ -4,18 +4,24 @@ action :add_afl do
 	command_string = "add_afl --afl_path #{@new_resource.archive_path}"
 	
 	hlmcli(command_string)
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :add_lca do
 	command_string = "add_lca --lca_path #{@new_resource.archive_path}"
 	
 	hlmcli(command_string)
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :add_sda do
 	command_string = "add_sda --sda_path #{@new_resource.archive_path}"
 	
 	hlmcli(command_string)
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :update_hlm do
@@ -26,6 +32,8 @@ action :update_hlm do
 	end
 	
 	hlmcli(command_string)
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :apply_sp do
@@ -38,25 +46,31 @@ action :apply_sp do
 	end
 	
 	hlmcli(command_string)
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :deploy_content do
 	command_string = "deploy_hana_content --confirm_dialog true --instance_Nr #{node['hana']['instance']} --db_user SYSTEM --db_pwd #{node['hana']['syspassword']} --content_file_path #{@new_resource.archive_path} --content_update_source remote"
 	
 	hlmcli(command_string)
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :add_host do
 	command_string = "add_host --addhost_hostname #{@new_resource.hostname} --addhost_sapadm_pwd #{@new_resource.sapadm_pass} --addhost_role #{@new_resource.role} --addhost_memory #{node['hana']['sid']}=#{@new_resource.target_memory}"
 	
 	hlmcli(command_string)
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :add_system do
 	# java is required for HLM to complete this task
-	package "java-1_7_0-ibm"
-		unless system('which java')
-	end
+	_which = Mixlib::ShellOut.new("which java")
+	_which.run_command
+	package "java-1_7_0-ibm" if _which.exitstatus == 1
 	
 	#build default log and data path if none is provided
 	if @new_resource.target_datapath.nil?
@@ -117,6 +131,8 @@ action :add_system do
     recursive true
 		not_if { ::File.directory?("#{node['hana']['installpath']}/#{new_resource.target_sid}/global/sapcontrol") }
   end
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :remove_system do
@@ -143,8 +159,10 @@ action :remove_system do
 	directory "#{node['hana']['installpath']}/#{@new_resource.target_sid}" do
     action :delete
     recursive true
-		subscribes :delete, resources(:ruby_block => "sleep"), :immediately 
+		subscribes :delete, "ruby_block[sleep]", :immediately 
   end
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :remove_host do
@@ -164,13 +182,13 @@ action :remove_host do
 	
 	hana_hdbsql "flag-host-as-removed" do
 		sql_file_path "/tmp/hdbsql_hostremove"
-		instance_number "#{node['hana']['instance']}"
+		instance_number node['hana']['instance'].to_s
 		username "SYSTEM"
 		password node['hana']['syspassword']
 	end
 	
 	# verify reorg is finished
-	_hdbsql_command = "#{node[:hana][:installpath]}/hdbclient/hdbsql -i #{node['hana']['instance']} -x -u SYSTEM -p #{node['hana']['syspassword']} 'SELECT REMOVE_STATUS FROM m_landscape_host_configuration'"
+	_hdbsql_command = "#{node['hana']['installpath']}/hdbclient/hdbsql -i #{node['hana']['instance']} -x -u SYSTEM -p #{node['hana']['syspassword']} 'SELECT REMOVE_STATUS FROM m_landscape_host_configuration'"
 	ruby_block "verify-reorg" do
 		block do
 			_reorg_finish = 0
@@ -192,7 +210,7 @@ action :remove_host do
 				self.notifies :run, resources(:ruby_block => "handle-reorg-status"), :immediately
 			end
 		end
-		subscribes :run, resources(:hana_hdbsql  => "flag-host-as-removed")
+		subscribes :run, "hana_hdbsql[flag-host-as-removed]", :immediately
 		notifies :delete, "file[/tmp/hdbsql_hostremove]", :immediately
 	end
 	
@@ -209,6 +227,8 @@ action :remove_host do
 		end
 		action :nothing
 	end
+	
+	new_resource.updated_by_last_action(true)
 end
 
 action :rename do
@@ -242,6 +262,8 @@ action :rename do
 	else
 		hlmcli(command_string)
 	end
+	
+	new_resource.updated_by_last_action(true)
 end
 
 # basics of the hlmcli command

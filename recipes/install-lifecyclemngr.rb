@@ -10,28 +10,28 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmc
 	
 	# Install host agent 7.20 (patch level >= 153)
 	directory "Create temporary directory" do
-    path "#{node['install']['tempdir']}"
+    path node['install']['tempdir']
     action :create
     recursive true
   end
 
-  execute "Get SAPCAR tool for Hana extracting hana package" do
-    cwd "#{node['install']['tempdir']}"
-    command "wget #{node['install']['files']['sapcar']} -O sapcar" #must not be named SAPCAR as it exists in archive
-  end
+	#Get SAPCAR tool for Hana extracting hana package
+	remote_file "#{node['install']['tempdir']}/sapcar" do #must not be named SAPCAR as it exists in archive
+		source node['install']['files']['sapcar']
+	end
 
-  execute "Get SAP Host Agent package" do
-    cwd "#{node['install']['tempdir']}"
-    command "wget #{node['install']['files']['saphostagent']} -O SAP_HOST_AGENT.SAR"
-  end
+	#Get SAP Host Agent package
+	remote_file "#{node['install']['tempdir']}/SAP_HOST_AGENT.SAR" do
+		source node['install']['files']['saphostagent']
+	end
 
   execute "Extract & Install SAP Host Agent" do
-    cwd "#{node['install']['tempdir']}"
+    cwd node['install']['tempdir']
     command "chmod +x sapcar && ./sapcar -xvf SAP_HOST_AGENT.SAR && ./saphostexec -install"
   end
 
   directory "Delete temporary directory" do
-    path "#{node['install']['tempdir']}"
+    path node['install']['tempdir']
     recursive true
     action :delete
   end
@@ -43,10 +43,10 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmc
     recursive true
   end
 
-  execute "Get HANA lifecycle manager archive" do
-    cwd "#{node['install']['tempdir']}/archives"
-    command "wget #{node['install']['files']['hanalifecyclemngr']} -O SAPHANALM.SAR"
-  end
+	#Get HANA lifecycle manager archive
+	remote_file "#{node['install']['tempdir']}/archives/SAPHANALM.SAR" do
+		source node['install']['files']['hanalifecyclemngr']
+	end
 	
   hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} --hlm_archive=#{node['install']['tempdir']}/archives/SAPHANALM.SAR"
 

@@ -1,5 +1,12 @@
 actions :update_hlm, :add_afl, :add_lca, :add_sda, :apply_sp, :deploy_content, :add_host, :add_system, :remove_host, :remove_system, :rename
 
+default_action :update_hlm
+
+def initialize(*args)
+  super
+  @action = :update_hlm
+end
+
 #Sources
 attribute :update_source, :kind_of => String, :default => "marketplace", :equal_to => ["marketplace", "inbox"]
 attribute :archive_path , :kind_of => String
