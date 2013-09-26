@@ -107,12 +107,8 @@ action :add_system do
 	command_string = "add_hana_system --dvdpath #{@new_resource.archive_path} --new_system_sid #{@new_resource.target_sid} --sapmntpath #{node['hana']['installpath']} --instance_number #{@new_resource.target_instance} --memory_configuration #{@new_resource.target_memory} --datapath " + _datapath + " --logpath " + _logpath + " --master_password #{@new_resource.target_pass}"
 	
 	hlmcli(command_string)
-end
-
-action :remove_system do
-	_command_string = "remove_hana_system --memory_configuration #{@new_resource.target_memory} --dvdpath #{@new_resource.archive_path}"
 	
-	# make sapcontrol directory (may not have been created during system add)
+	# make sapcontrol directory, it is necessary for many administrative actions
 	directory "#{node['hana']['installpath']}/#{@new_resource.target_sid}/global/sapcontrol" do
     mode "755"
     owner "#{new_resource.target_sid}adm"
@@ -121,6 +117,10 @@ action :remove_system do
     recursive true
 		not_if { ::File.directory?("#{node['hana']['installpath']}/#{new_resource.target_sid}/global/sapcontrol") }
   end
+end
+
+action :remove_system do
+	_command_string = "remove_hana_system --memory_configuration #{@new_resource.target_memory} --dvdpath #{@new_resource.archive_path}"
 	
 	# before doing anything make sure the cli exists
 	if !::File.exist?("#{node['hana']['installpath']}/#{@new_resource.target_sid}/HLM/hlmcli/hlmcli.sh")
