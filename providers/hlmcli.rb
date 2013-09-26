@@ -109,8 +109,45 @@ action :add_system do
 	hlmcli(command_string)
 end
 
+action :remove_system do
+	_command_string = "remove_hana_system --memory_configuration #{@new_resource.target_memory} --dvdpath #{@new_resource.archive_path}"
+	
+	# make sapcontrol directory (may not have been created during system add)
+	directory "#{node['hana']['installpath']}/#{@new_resource.target_sid}/global/sapcontrol" do
+    mode "755"
+    owner "#{new_resource.target_sid}adm"
+    group "sapsys"
+    action :create
+    recursive true
+		not_if { ::File.directory?("#{node['hana']['installpath']}/#{new_resource.target_sid}/global/sapcontrol") }
+  end
+	
+	# before doing anything make sure the cli exists
+	if !::File.exist?("#{node['hana']['installpath']}/#{@new_resource.target_sid}/HLM/hlmcli/hlmcli.sh")
+		raise "HANA Lifecycle Manager is not installed."
+	end
+	
+	# run the HLM command from target
+	execute "Execute HLM command line" do
+		cwd "#{node['hana']['installpath']}/#{new_resource.target_sid}/HLM/hlmcli"
+		command "./hlmcli.sh --sid #{new_resource.target_sid} --sidadm_pwd #{new_resource.target_pass} #{_command_string}"
+	end
+	
+	ruby_block "sleep" do
+		block do
+			sleep 10 # allow HLM processes to stop
+		end
+	end
+	
+	# cleanup filesystem 
+	directory "#{node['hana']['installpath']}/#{@new_resource.target_sid}" do
+    action :delete
+    recursive true
+		subscribes :delete, resources(:ruby_block => "sleep"), :immediately 
+  end
+end
+
 action :remove_host do
-	#node.set[:hlmcli][:reorg_finish] = 1
 	_command_string = "remove_host --removehost_hostname #{@new_resource.hostname}"
 	
 	run_context.include_recipe "hana::install-client"

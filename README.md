@@ -560,13 +560,13 @@ Applications or other cookbooks can use the hana_hlmcli resource to run HANA Lif
 
 #### Usage
 
-The hana_hlmcli resource has 10 actions: update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, add_system, remove_host, and rename.
+The hana_hlmcli resource has 11 actions: update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, remove_host, add_system, remove_system and rename.
 
-The update_hlm action is used to update the HANA Lifecycle Manager. The add_afl action is used to install the HANA Application Function Library. The add_lca action is used to install the HANA liveCache Applications. The add_sda action is used to install the HANA Smart Data Access. The apply_sp is used to apply HANA support packages. The deploy_content action is used to deploy HANA Applications Content. The add_host action is used to add another server to a distributed HANA system. The remove_host action is used to remove a server from a distributed HANA system. The add_system action is used to add another HANA installation to the same server. The rename action is used to change the hostname, SID, and/or system number of the HANA installation.
+The update_hlm action is used to update the HANA Lifecycle Manager. The add_afl action is used to install the HANA Application Function Library. The add_lca action is used to install the HANA liveCache Applications. The add_sda action is used to install the HANA Smart Data Access. The apply_sp is used to apply HANA support packages. The deploy_content action is used to deploy HANA Applications Content. The add_host action is used to add another server to a distributed HANA system. The remove_host action is used to remove a server from a distributed HANA system. The add_system action is used to add another HANA installation to the same server. The remove_system action is used to remove another HANA installation from the same server. The rename action is used to change the hostname, SID, and/or system number of the HANA installation.
 
 Here are the accepted arguments:
 * action
-   - Action, can be update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, add_system, remove_host, or rename. 
+   - Action, can be update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, remove_host, add_system, remove_system, or rename. 
    - no default action is set
    - optional
 * update_source
@@ -607,20 +607,20 @@ Here are the accepted arguments:
    - needed by add_host
 * target_memory
    - Specifies the amount of RAM (in MB) to use on additional server or the distribution of RAM on local system
-   - needed by add_host and add_system
+   - needed by add_system, remove_system, and add_host
 * target_sid
    - The new system id
-   - needed by add_system, and optionally rename
+   - needed by add_system, remove_system, and optionally rename
 * target_instance
    - The new system instance number
-   - needed by add_system, and optionally rename
+   - needed by add_system, remove_system, and optionally rename
 * target_datapath and target_logpath
    - The path for the data and log directories of the new system
    - defaults to the HANA install defaults
    - needed by add_system
 * target_pass
    - The password to be used for sidadm and SYSTEM of the new system
-   - needed by add_system
+   - needed by add_system, and remove_system
 
 #### Examples
 
@@ -663,6 +663,13 @@ Add another server to HANA system
         sapadm_pass "ChangeMe"
         target_memory "20480"
     end
+	
+Remove additional HANA server
+
+    hana_hlmcli "Remove node" do
+        action :remove_host
+        hostname "someserver.wdf.sap.corp"
+    end
 
 Add another HANA instance to the same server (note: archive_path is the location of the HANA install DVD)
 
@@ -676,12 +683,15 @@ Add another HANA instance to the same server (note: archive_path is the location
         target_pass "PleaseChangeMe"
     end
 
-Remove additional HANA server
-
-    hana_hlmcli "Remove node" do
-        action :remove_host
-        hostname "someserver.wdf.sap.corp"
-    end
+Remove additional HANA instance on the same server (note: archive_path is the location of the HANA install DVD)
+	
+	hana_hlmcli "Remove additional instance" do
+		action :remove_system
+		archive_path "/hana/shared/pkgs" #HANA install DVD
+		target_sid "NEW"
+		target_memory "HNA=32768"
+		target_pass "P1easeChangeMe"
+	end
 	
 Change hostname, sid, or sysnr of HANA server
 
