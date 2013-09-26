@@ -117,20 +117,20 @@ action :add_system do
     recursive true
 		not_if { ::File.directory?(_logpath) }
   end
-
-	command_string = "add_hana_system --dvdpath #{@new_resource.archive_path} --new_system_sid #{@new_resource.target_sid} --sapmntpath #{node['hana']['installpath']} --instance_number #{@new_resource.target_instance} --memory_configuration #{@new_resource.target_memory} --datapath " + _datapath + " --logpath " + _logpath + " --master_password #{@new_resource.target_pass}"
-	
-	hlmcli(command_string)
 	
 	# make sapcontrol directory, it is necessary for many administrative actions
 	directory "#{node['hana']['installpath']}/#{@new_resource.target_sid}/global/sapcontrol" do
     mode "755"
-    owner "#{new_resource.target_sid}adm"
+    owner _sidadm
     group "sapsys"
     action :create
     recursive true
 		not_if { ::File.directory?("#{node['hana']['installpath']}/#{new_resource.target_sid}/global/sapcontrol") }
   end
+
+	command_string = "add_hana_system --dvdpath #{@new_resource.archive_path} --new_system_sid #{@new_resource.target_sid} --sapmntpath #{node['hana']['installpath']} --instance_number #{@new_resource.target_instance} --memory_configuration #{@new_resource.target_memory} --datapath " + _datapath + " --logpath " + _logpath + " --master_password #{@new_resource.target_pass}"
+	
+	hlmcli(command_string)
 	
 	new_resource.updated_by_last_action(true)
 end
