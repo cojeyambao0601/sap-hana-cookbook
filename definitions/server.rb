@@ -34,6 +34,12 @@ define :server, :exe => "" do
     end
     hana_install_command = "#{hana_install_command} --logpath=#{node['hana']['logpath']}"
   end
+  
+  # check if a virtual hostname is defined - if yes, we add the corresponding option to the installer
+  if "#{node['hana']['hostname']}" != ""
+    Chef::Log.info "a custom hostname #{node['hana']['hostname']} is defined and will be used for the installation"
+    hana_install_command = "#{hana_install_command} --hostname=#{node['hana']['hostname']}"
+  end
 
   hdbcmd "run install / upgrade hana node" do
     exe "#{hana_install_command}"
