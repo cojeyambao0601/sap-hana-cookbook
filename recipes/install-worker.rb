@@ -40,7 +40,8 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
   # build hana install command
   hana_install_worker_command = "./hdbaddhost --batch --sid=#{node['hana']['sid']} --hostname=#{node[:hostname]} --sapmnt=#{node['hana']['installpath']} --password=#{node['hana']['password']} --role=worker"
   if "#{node['hana']['checkhardware']}".chomp != "true"
-    hana_install_worker_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{hana_install_worker_command} --ignore=#{node['hana']['checkstoignore']}"
+    #hana_install_worker_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{hana_install_worker_command} --ignore=#{node['hana']['checkstoignore']}"
+    hana_install_worker_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{hana_install_worker_command}"
   end
 
   # run hdbaddhost command to add a new worker machihe to existing HANA DB cluster
