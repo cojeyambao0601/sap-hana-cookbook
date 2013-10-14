@@ -12,6 +12,10 @@ define :client do
 
   hana_install_command = "./hdbinst -a client -p #{node['hana']['installpath']}/hdbclient #{sid}"
 
+  log "---------"
+  log "will use client installer from #{node['install']['files']['hanaclient']}"
+  log "---------"
+
   hdbcmd "run install hana client" do
     exe "#{hana_install_command}"
     bin_dir "SAP_HANA_CLIENT"

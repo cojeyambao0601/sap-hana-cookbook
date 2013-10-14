@@ -40,6 +40,10 @@ define :server, :exe => "" do
     Chef::Log.info "a custom hostname #{node['hana']['hostname']} is defined and will be used for the installation"
     hana_install_command = "#{hana_install_command} --hostname=#{node['hana']['hostname']}"
   end
+  
+  log "---------"
+  log "will use installer from #{node['install']['files']['hanadb']}"
+  log "---------"
 
   hdbcmd "run install / upgrade hana node" do
     exe "#{hana_install_command}"

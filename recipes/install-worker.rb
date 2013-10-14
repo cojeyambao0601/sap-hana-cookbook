@@ -37,6 +37,17 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
     end
   end
 
+  # hdbupd needs a user with id=0 to update a worker in a distributed setup
+  user "#{node['hana']['dist']['2ndroot']}" do
+    supports :non_unique => true
+    comment "second root user"
+    home "/root"
+    uid 0
+    gid 0
+    shell "/bin/bash"
+    password "#{node['hana']['dist']['2ndrootpwd']}"
+  end
+
   # build hana install command
   hana_install_worker_command = "./hdbaddhost --batch --sid=#{node['hana']['sid']} --hostname=#{node[:hostname]} --sapmnt=#{node['hana']['installpath']} --password=#{node['hana']['password']} --role=worker"
   if "#{node['hana']['checkhardware']}".chomp != "true"
