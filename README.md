@@ -45,6 +45,8 @@ The structure of ['install'].['files'].['hanadb'] archive must be a sole folder 
 * `['hana'].['dist'].['master-mode-required']` - Only required for distributed installs with newer HANA versions - see the comments in the enable-master-mode.rb recipe.
 * `['hana'].['dist'].['waitcount']` - The number of wait loops for the NFS share to be available. Needed in case of distributed installation where the NFS share is being created in parallel to the SAP Hana node installations. Usually keep the defaults.
 * `['hana'].['dist'].['waittime']` - How much time each loop will wait. Usually keep the defaults.
+* `['hana'].['dist'].['2ndroot']` - second root user on worker, needed for upgrade process.
+* `['hana'].['dist'].['2ndrootpwd']` - second root user password on worker, needed for uprade process.
 
 All attributes under ['hana'].['dist'] hierarchy are related to distributed SAP Hana system installation process. Override only if you are installing a distributed system.
 
@@ -109,7 +111,7 @@ To install SAP Hana client on a node, use the following role:
 
 	run_list "recipe[hana::install-client]"
 
-### Updrading existing SAP Hana installations
+### Upgrading existing SAP Hana installations
 The recipes **[hana::upgrade]** and **[hana::upgrade-client]** - as the names imply - will upgrade an existing SAP Hana and SAP Hana client, respectively.  
 Ensure that the upgrade packages are accessible by setting the node attributes `['install']['files']['hanadb']` and `['install']['files']['hanaclient']` accordingly.
 
