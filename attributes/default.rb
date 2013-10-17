@@ -20,6 +20,7 @@ default['hana']['dist']['waitcount']            = 5
 default['hana']['dist']['waittime']             = 5
 # needed for dist upgrade prcess on worker
 default['hana']['dist']['2ndroot']              = "toor"
+default['hana']['dist']['2ndrootclearpwd']      = "Toor1234"
 default['hana']['dist']['2ndrootpwd']           = "$1$ytOMGuiO$KAPtio4Eh7JK0Rm4EAPzL/"
 
 default['install']['tempdir']             = "/monsoon/tmp"
