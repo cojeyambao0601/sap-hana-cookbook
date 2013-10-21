@@ -10,6 +10,17 @@ else
   raise "No shared volume defined, thus a worker node install is not possible"
 end
 
+# hdbupd needs a user with id=0 to update a worker in a distributed setup
+user "#{node['hana']['dist']['2ndroot']}" do
+  supports :non_unique => true
+  comment "second root user"
+  home "/root"
+  uid 0
+  gid 0
+  shell "/bin/bash"
+  password "#{node['hana']['dist']['2ndrootpwd']}"
+end
+  
 # make sure there is no hana worker installed yet on this machine
 if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node[:hostname]}/install.finished")
 
@@ -35,17 +46,6 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
       raise "Gave up waiting for install finished file #{install_finished_file} to be created. Please check the master installation."	
       end
     end
-  end
-
-  # hdbupd needs a user with id=0 to update a worker in a distributed setup
-  user "#{node['hana']['dist']['2ndroot']}" do
-    supports :non_unique => true
-    comment "second root user"
-    home "/root"
-    uid 0
-    gid 0
-    shell "/bin/bash"
-    password "#{node['hana']['dist']['2ndrootpwd']}"
   end
 
   # build hana install command
