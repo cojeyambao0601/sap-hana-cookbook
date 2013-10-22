@@ -31,8 +31,10 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 #### Attributes related to the installation process.
 * `['install'].['tempdir']` - temporary directory needed during installation
 * `['install'].['files'].['sapcar']` - URL to the SAPCAR tool (for extracting SAR files)
+* `['install'].['files'].['saphostagent']` - URL to the SAR file for the SAP Host Agent
 * `['install'].['files'].['hanadb']` - URL to the SAR file for the Hana installer
 * `['install'].['files'].['hanaclient']` - URL to the SAR file for the Hana client installer
+* `['install'].['files'].['hanalifecyclemngr']` - URL to the SAR file for the Hana lifecycle manager installer
 
 All attributes under ['install'].['files'] hierarchy, must be accessible by http get method from the node on which the installation is executed.
 The structure of ['install'].['files'].['hanadb'] archive must be a sole folder named SAP_HANA_DATABASE and all installation files in it.
@@ -72,6 +74,9 @@ As with the **[hana::install-client]** recipe, the node attribute `['hana']['cli
 ### hana::install-worker
 Recipe to add a worker node to existing SAP Hana distributed cluster. To use this recipe you must provide the shared storage information by overriding the attribute ['hana'].['dist'].['sharedvolume']. See examples of distributed installation below.
 
+### hana::install-lifecyclemngr
+Installs SAP Hana lifecycle manager on the node. The lifecycle manager will be installed into `['hana']['installpath']`/`['hana']['sid']`/HLM. The lifecycle manager is dependent on an installed SAP Hana and will trigger an install if SAP Hana does not exist. 
+
 ---
 Usage
 ===========
@@ -110,6 +115,17 @@ To install SAP Hana client on a node, use the following role:
 	)
 
 	run_list "recipe[hana::install-client]"
+
+### SAP Hana lifecycle manager on a node
+For installing SAP Hana lifecycle manager on a node in your landscape, add the **[hana::install-lifecyclemngr]** recipe to the node's run list.
+
+#### Example
+To install SAP Hana lifecycle manager on a node, use the following role:
+
+	name "hana-install-lifecyclemngr"
+	description "Role for installing SAP Hana lifecyclemanager"
+
+	run_list "recipe[hana::install-lifecyclemngr]"
 
 ### Upgrading existing SAP Hana installations
 The recipes **[hana::upgrade]** and **[hana::upgrade-client]** - as the names imply - will upgrade an existing SAP Hana and SAP Hana client, respectively.  
@@ -538,6 +554,160 @@ Some useful examples of how to use activate
 		action :activate
 	end
 
+### hana\_hlmcli
+
+#### Description
+
+Applications or other cookbooks can use the hana_hlmcli resource to run HANA Lifecycle Manager commands.
+
+#### Usage
+
+The hana_hlmcli resource has 11 actions: update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, remove_host, add_system, remove_system and rename.
+
+The update_hlm action is used to update the HANA Lifecycle Manager. The add_afl action is used to install the HANA Application Function Library. The add_lca action is used to install the HANA liveCache Applications. The add_sda action is used to install the HANA Smart Data Access. The apply_sp is used to apply HANA support packages. The deploy_content action is used to deploy HANA Applications Content. The add_host action is used to add another server to a distributed HANA system. The remove_host action is used to remove a server from a distributed HANA system. The add_system action is used to add another HANA installation to the same server. The remove_system action is used to remove another HANA installation from the same server. The rename action is used to change the hostname, SID, and/or system number of the HANA installation.
+
+Here are the accepted arguments:
+* action
+   - Action, can be update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, remove_host, add_system, remove_system, or rename. 
+   - no default action is set
+   - optional
+* update_source
+   - The location to pull updates from
+   - Can be _marketplace_ for Service Marketplace or _inbox_ for local filesystem
+   - default source is _marketplace_
+   - needed by update_hlm, apply_sp
+* smp_user
+   - The user name to connect to Service Marketplace
+   - needed when `update_source` is _marketplace_
+* smp_pass
+   - The password to connect to Service Marketplace
+   - needed when `update_source` is _marketplace_
+* use_proxy
+   - Specifies if a proxy is needed for external connections
+   - default is true
+   - needed when `update_source` is _marketplace_
+* proxy_host
+   - Hostname of the proxy server
+   - default is proxy
+   - needed when `use_proxy` is _true_
+* proxy_port
+   - Port of the proxy server
+   - default is 8080
+   - needed when `use_proxy` is _true_
+* archive_path
+   - Local path to package
+   - needed by add_afl, add_lca, add_sda, deploy_content, add_system, and `update_source` is _inbox_
+* sapadm_pass
+   - Password of the sapadm on remote server
+   - needed by add_host
+* hostname
+   - Hostname of additional server
+   - needed by add_host, remove_host, and optionally rename
+* role
+   - Role of additional server
+   - can be _worker_ or _slave_
+   - needed by add_host
+* target_memory
+   - Specifies the amount of RAM (in MB) to use on additional server or the distribution of RAM on local system
+   - needed by add_system, remove_system, and add_host
+* target_sid
+   - The new system id
+   - needed by add_system, remove_system, and optionally rename
+* target_instance
+   - The new system instance number
+   - needed by add_system, remove_system, and optionally rename
+* target_datapath and target_logpath
+   - The path for the data and log directories of the new system
+   - defaults to the HANA install defaults
+   - needed by add_system
+* target_pass
+   - The password to be used for sidadm and SYSTEM of the new system
+   - needed by add_system, and remove_system
+
+#### Examples
+
+Update the HANA Lifecycle Manager from package
+
+    hana_hlmcli "Update the Lifecycle Manager" do
+        action :update_hlm
+        update_source "inbox"
+        archive_path "/tmp/SAPHANALM06_0-10012745.SAR"
+    end
+
+Add AFL SDA or LCA
+
+    hana_hlmcli "Add AFL to HANA" do
+        action :add_afl
+        archive_path "/tmp/IMDB_AFL100_60.SAR"
+    end
+
+Apply support pack(s) (note: archive_path is a directory not a file and must contain the stack.xml and support packs)
+
+    hana_hlmcli "Apply sp update" do
+        action :apply_sp
+        archive_path "/tmp/inbox"
+        update_source "inbox"
+    end
+
+Install application content (note: archive_path is the zip archive of the content DVD)
+
+    hana_hlmcli "Application content deploy" do
+        action :deploy_content
+        archive_path "/tmp/51046579.zip"
+    end
+
+Add another server to HANA system
+
+    hana_hlmcli "Add worker node" do
+        action :add_host
+        hostname "someserver.wdf.sap.corp"
+        role "worker"
+        sapadm_pass "ChangeMe"
+        target_memory "20480"
+    end
+	
+Remove additional HANA server
+
+    hana_hlmcli "Remove node" do
+        action :remove_host
+        hostname "someserver.wdf.sap.corp"
+    end
+
+Add another HANA instance to the same server (note: archive_path is the location of the HANA install DVD)
+
+    hana_hlmcli "Add another instance" do
+        action :add_system
+        archive_path "/mnt" #HANA install DVD
+        target_sid "NEW"
+        target_instance 55
+        target_memory "HNA=16384,NEW=16384"
+        target_logpath "/hana/NEW/log"
+        target_pass "PleaseChangeMe"
+    end
+
+Remove additional HANA instance on the same server (note: archive_path is the location of the HANA install DVD)
+	
+	hana_hlmcli "Remove additional instance" do
+		action :remove_system
+		archive_path "/hana/shared/pkgs" #HANA install DVD
+		target_sid "NEW"
+		target_memory "HNA=32768"
+		target_pass "P1easeChangeMe"
+	end
+	
+Change hostname, sid, or sysnr of HANA server
+
+    hana_hlmcli "Change HANA SID" do
+        action :rename
+        target_sid "NDB"
+    end
+	
+	hana_hlmcli "Change HANA Hostname & Sysnr" do
+        action :rename
+        hostname "someserver.wdf.sap.corp"
+		target_instance "33"
+    end
+	
 ---
 Real world full examples of hana resources
 ===============
