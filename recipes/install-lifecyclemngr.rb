@@ -2,14 +2,15 @@
 # Recipe:: install-lifecyclemngr
 # Installs SAP Hana lifecycle manager on the node.
 
+# verify HLM does not already exist
+if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmcli/hlmcli.sh")
+
+# lroot must be member of sudoers sysadmin group
 group "sysadmin" do
   action :modify
   members "lroot"
   append true
 end
-
-# verify HLM does not already exist
-if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HLM/hlmcli/hlmcli.sh")
 
 	# HANA must exist before installing HLM
 	include_recipe 'hana::install'
