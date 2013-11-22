@@ -10,6 +10,6 @@ recipe           "hana::install-client", "Installs SAP Hana client on the node"
 recipe           "hana::install-lifecyclemngr", "Installs SAP Hana lifecycle manager on the node"
 recipe           "hana::upgrade", "Upgrades an existing SAP Hana installation"
 recipe           "hana::upgrade-client", "Upgrades an existing SAP Hana client installation"
-depends          "testsuite"
+
 depends          "nfs"
 supports         "suse"
