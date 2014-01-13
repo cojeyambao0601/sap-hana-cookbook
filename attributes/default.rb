@@ -23,10 +23,20 @@ default['hana']['dist']['2ndroot']              = "toor"
 default['hana']['dist']['2ndrootclearpwd']      = "Toor1234"
 default['hana']['dist']['2ndrootpwd']           = "$1$ytOMGuiO$KAPtio4Eh7JK0Rm4EAPzL/"
 
-default['install']['tempdir']             = "/monsoon/tmp"
-default['install']['files']['sapcar']     = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
-default['install']['files']['saphostagent'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/saphostagent/lnx_x64/7.2SP160/SAPHOSTAGENT.SAR"
-default['install']['files']['hanadb']     = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/1.0.67/SAP_HANA_DATABASE100_67_Linux_on_x86_64.SAR"
-default['install']['files']['hanaclient'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/1.0.67/SAP_HANA_CLIENT100_67_Linux_on_x86_64.SAR"
-default['install']['files']['hanalifecyclemngr'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPHANALM06P_2.SAR"
-default['install']['files']['afl'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/1.0.67/SAP_HANA_AFL100_67_1_Linux_on_x86_64.SAR"
+default['install']['tempdir']             		= "/monsoon/tmp"
+
+default['install']['repo']       				= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb"
+default['hana']['revision'] 					= '67'
+
+# donwload sapcar executable ...
+default['install']['files']['sapcar']     			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
+default['install']['files']['hostagent'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/saphostagent/lnx_x64/7.2SP160/SAPHOSTAGENT.SAR"
+
+# construct url from install repo
+default['install']['files']['hanadb'] 				= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_DATABASE100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
+default['install']['files']['hanaclient'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_CLIENT100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
+default['install']['files']['lifecyclemngr'] 		= node['install']['repo'] + "/SAPHANALM06P_2.SAR"
+default['install']['files']['hanalifecyclemngr'] 	= node['install']['files']['lifecyclemngr']
+default['install']['files']['saphostagent'] 		= node['install']['files']['hostagent']
+default['install']['files']['afl'] 					= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_1" + "_Linux_on_x86_64.SAR"
+
