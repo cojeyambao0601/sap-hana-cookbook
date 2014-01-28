@@ -23,6 +23,8 @@ def update
 end
 
 action :create_workspace do
+    admin_user = node['hana']['sid'].downcase + "adm"
+    currenthanaversion = `su --login #{admin_user} -c 'HDB version' | grep version: | awk -F \. '{ print $3 }'`
 
     # first create the directory
     directory "#{new_resource.workspace_path}" do
@@ -31,7 +33,11 @@ action :create_workspace do
       mode 0755
     end
 
-    command_to_execute = get_regi_command + "create workspace --key=#{@new_resource.key}" + add_force
+    if currenthanaversion.to_i > 69
+        command_to_execute = get_regi_command + "create workspace . --key=#{@new_resource.key}" + add_force
+    else
+        command_to_execute = get_regi_command + "create workspace --key=#{@new_resource.key}" + add_force
+    end
     execute "Running regi create_workspace - #{command_to_execute}" do
         cwd new_resource.workspace_path
         command "#{command_to_execute}"
