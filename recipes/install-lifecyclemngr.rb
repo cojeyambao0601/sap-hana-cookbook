@@ -55,7 +55,7 @@ end
 		source node['install']['files']['hanalifecyclemngr']
 	end
 	
-  hana_install_command = "su - lroot -c './hdbinst --batch --sid=#{node['hana']['sid']} --hlm_archive=#{node['install']['tempdir']}/archives/SAPHANALM.SAR' "
+  hana_install_command = "su - lroot -c '#{node['install']['tempdir']/hdbinst --batch --sid=#{node['hana']['sid']} --hlm_archive=#{node['install']['tempdir']}/archives/SAPHANALM.SAR' "
 
   hdbcmd "run install of hana lifecycle manager" do
     exe hana_install_command
