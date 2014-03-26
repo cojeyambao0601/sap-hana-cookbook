@@ -35,7 +35,7 @@ default['install']['files']['hostagent'] 			= "http://moo-repo.wdf.sap.corp:8080
 # construct url from install repo
 default['install']['files']['hanadb'] 				= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_DATABASE100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
 default['install']['files']['hanaclient'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_CLIENT100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
-default['install']['files']['lifecyclemngr'] 		= node['install']['repo'] + "/SAPHANALM06P_2.SAR"
+default['install']['files']['lifecyclemngr'] 		= node['install']['repo'] + "/SAPHANALM_" + node['hana']['revision'][0] + ".SAR"
 default['install']['files']['hanalifecyclemngr'] 	= node['install']['files']['lifecyclemngr']
 default['install']['files']['saphostagent'] 		= node['install']['files']['hostagent']
 default['install']['files']['afl'] 					= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_1" + "_Linux_on_x86_64.SAR"
