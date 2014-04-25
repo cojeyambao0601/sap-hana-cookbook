@@ -3,7 +3,7 @@ maintainer_email "andreas.bloemeke@sap.com, thomas.graichen@sap.com, harald.kuer
 license          ""
 description      "Install/upgrade SAP Hana and SAP Hana client"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "2.02.07"
+version          "2.02.08"
 recipe           "hana::install", "Installs a vanilla SAP Hana on the node"
 recipe           "hana::install-worker", "Installs a vanilla SAP Hana worker on the node"
 recipe           "hana::install-client", "Installs SAP Hana client on the node"
