@@ -31,6 +31,7 @@ default['hana']['revision'] 					= '67'
 # donwload sapcar executable ...
 default['install']['files']['sapcar']     			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
 default['install']['files']['hostagent'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/saphostagent/lnx_x64/7.2SP160/SAPHOSTAGENT.SAR"
+default['install']['files']['sapcryptolib']		= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/sapcryptolib/SAPCRYPTOLIB_34-10010845.SAR"
 
 # construct url from install repo
 default['install']['files']['hanadb'] 				= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_DATABASE100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
