@@ -14,6 +14,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
   remote_file "Get SAP_HANA_PACKAGE.SAR file" do
       source "#{params[:bin_file_url]}"
       path "#{node['install']['tempdir']}/SAP_HANA_PACKAGE.SAR"
+      backup false
   end
   
   execute "Extract Hana binary package" do
