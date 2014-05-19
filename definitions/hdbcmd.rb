@@ -11,17 +11,18 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
     command "wget #{node['install']['files']['sapcar']}"
   end
 
-  if ::File.file?(params[:bin_file_url])
-    execute "Get Hana binary package" do
-      cwd "#{node['install']['tempdir']}"
-      command "cp #{params[:bin_file_url]} SAP_HANA_PACKAGE.SAR"
-    end
-  else
+  if params[:bin_file_url].start_with?("http")
     execute "Get Hana binary package" do
       cwd "#{node['install']['tempdir']}"
       command "wget #{params[:bin_file_url]} -O SAP_HANA_PACKAGE.SAR"
     end
+  else
+     execute "Get Hana binary package" do
+      cwd "#{node['install']['tempdir']}"
+      command "cp #{params[:bin_file_url]} SAP_HANA_PACKAGE.SAR"
+    end
   end
+  #remote_file would fit both variants, but seems to be very slow compared to wget and cp
   #remote_file "Get SAP_HANA_PACKAGE.SAR file" do
   #    source "#{params[:bin_file_url]}"
   #    path "#{node['install']['tempdir']}/SAP_HANA_PACKAGE.SAR"
