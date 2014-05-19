@@ -11,19 +11,11 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
     command "wget #{node['install']['files']['sapcar']}"
   end
 
-  #check if file can be access via filesystem, if yes copy instead of wget
-  if ::File.file?(params[:bin_file_url])
-    remote_file "Get SAP_HANA_PACKAGE.SAR file" do
+  remote_file "Get SAP_HANA_PACKAGE.SAR file" do
       source "#{params[:bin_file_url]}"
       path "#{node['install']['tempdir']}/SAP_HANA_PACKAGE.SAR"
-    end
-  else
-    execute "Get Hana binary package" do
-      cwd "#{node['install']['tempdir']}"
-      command "wget #{params[:bin_file_url]} -O SAP_HANA_PACKAGE.SAR"
-    end
   end
-
+  
   execute "Extract Hana binary package" do
     cwd "#{node['install']['tempdir']}"
     command "chmod +x SAPCAR && ./SAPCAR -xvf SAP_HANA_PACKAGE.SAR"
