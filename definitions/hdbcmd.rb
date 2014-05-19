@@ -12,7 +12,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
   end
 
   #check if file can be access via filesystem, if yes copy instead of wget
-  if ::File.file?(#{params[:bin_file_url]})
+  if ::File.file?(params[:bin_file_url])
     remote_file "Get SAP_HANA_PACKAGE.SAR file" do
       source "#{params[:bin_file_url]}"
       path "#{node['install']['tempdir']}/SAP_HANA_PACKAGE.SAR"
