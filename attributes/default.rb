@@ -26,6 +26,10 @@ default['hana']['dist']['2ndrootpwd']           = "$1$ytOMGuiO$KAPtio4Eh7JK0Rm4E
 default['install']['tempdir']             		= "/monsoon/tmp"
 
 default['install']['repo']       				= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb"
+default['install']['productiondevice1']  	= "derotvi0066.wdf.sap.corp:/derotvi0066a_ld9252/q_files"
+default['install']['productiondevice2']  	= "nsvf1735.wdf.sap.corp:/vol/nsvf1735a_newdb/q_newdb"
+default['install']['productionmountpoint1']  	      = "/sapmnt/production/makeresults/newdb_archive"
+default['install']['productionmountpoint2']  	      = "/sapmnt/production/newdb"
 default['hana']['revision'] 					= '67'
 
 # donwload sapcar executable ...
