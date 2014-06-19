@@ -1,5 +1,8 @@
 define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
 
+  # check for platform and install libraries
+  include_recipe "hana::install-libs"
+
   directory "Create temporary directory" do
     path "#{node['install']['tempdir']}"
     action :create
