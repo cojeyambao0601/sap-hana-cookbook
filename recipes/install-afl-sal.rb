@@ -16,7 +16,7 @@ hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} -password
   hdbcmd "run install of hana afl" do
     exe hana_install_command
     bin_dir "SAP_SAL_AFL_FOR_HANA"
-    bin_file_url node['install']['files']['afl']
+    bin_file_url node['install']['files']['afl-sal']
   end
 
 #else
