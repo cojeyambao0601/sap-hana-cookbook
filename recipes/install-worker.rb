@@ -68,7 +68,7 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
   # write a file to the fs, which will state that the installation is finished, so if any worker installation runs, it can be sure
   # that the installation of this worker was finished successfully
   file "Create installation completion flag" do
-    path "#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB00/#{node[:hostname]}/install.finished"
+    path "#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node[:hostname]}/install.finished"
     action :create
   end
 
