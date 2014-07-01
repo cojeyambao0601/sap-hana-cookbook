@@ -18,10 +18,16 @@ default['hana']['dist']['sharedmountoptions']   = ""
 default['hana']['dist']['master-mode-required'] = "false"
 default['hana']['dist']['waitcount']            = 5
 default['hana']['dist']['waittime']             = 5
+
 # needed for dist upgrade prcess on worker
 default['hana']['dist']['2ndroot']              = "toor"
 default['hana']['dist']['2ndrootclearpwd']      = "Toor1234"
 default['hana']['dist']['2ndrootpwd']           = "$1$ytOMGuiO$KAPtio4Eh7JK0Rm4EAPzL/"
+
+# xs attributes
+default['hana']['import_content'] = "on"
+default['hana']['xs_http_port']   = "80" + node['hana']['instance']
+default['hana']['xs_https_port']  = "443"
 
 default['install']['tempdir']             		= "/monsoon/tmp"
 
