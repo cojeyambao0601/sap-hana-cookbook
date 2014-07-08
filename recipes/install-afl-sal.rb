@@ -9,7 +9,7 @@
 include_recipe 'hana::install'
 	
 # set AFL install command
-hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} -password #{node['hana']['password']}"
+hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} --password #{node['hana']['password']}"
 
 
 
