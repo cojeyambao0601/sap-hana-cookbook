@@ -50,4 +50,4 @@ default['install']['files']['lifecyclemngr'] 		= node['install']['repo'] + "/SAP
 default['install']['files']['hanalifecyclemngr'] 	= node['install']['files']['lifecyclemngr']
 default['install']['files']['saphostagent'] 		= node['install']['files']['hostagent']
 default['install']['files']['afl'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_1" + "_Linux_on_x86_64.SAR"
-default['install']['files']['afl-sal'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/bobj/lumira/SAP_SAL_AFL_PATCH_1_FOR_SAP_HANA.SAR"
+default['install']['files']['afl_sal'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/bobj/lumira/SAP_SAL_AFL_PATCH_1_FOR_SAP_HANA.SAR"

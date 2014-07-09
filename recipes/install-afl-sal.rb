@@ -7,17 +7,19 @@
 
 # HANA must exist before installing HLM
 include_recipe 'hana::install'
-	
+
 # set AFL install command
 hana_install_command = "./hdbinst --batch --sid=#{node['hana']['sid']} --password=#{node['hana']['password']}"
 
+log "---------"
+log "will use installer from #{node['install']['files']['afl_sal']}"
+log "---------"
 
-
-  hdbcmd "run install of hana afl" do
-    exe hana_install_command
-    bin_dir "SAP_SAL_AFL_FOR_HANA"
-    bin_file_url node['install']['files']['afl-sal']
-  end
+hdbcmd "run install of hana afl" do
+  exe hana_install_command
+  bin_dir "SAP_SAL_AFL_FOR_HANA"
+  bin_file_url node['install']['files']['afl_sal']
+end
 
 #else
 #  log "AFL seems to be installed already, so skipping this step"
