@@ -17,7 +17,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
   if params[:bin_file_url].start_with?("http")
     execute "Get Hana binary package" do
       cwd "#{node['install']['tempdir']}"
-      command "wget #{params[:bin_file_url]} -O SAP_HANA_PACKAGE.SAR"
+      command "wget --progress=dot:giga #{params[:bin_file_url]} -O SAP_HANA_PACKAGE.SAR"
     end
   else
     directory "#{node['install']['productionmountpoint1']}" do
