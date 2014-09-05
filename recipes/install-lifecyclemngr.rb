@@ -62,6 +62,11 @@ end
     bin_file_url node['install']['files']['hanalifecyclemngr']
   end
 
+  link '#{node['hana']['installpath']}/hdbclient' do
+    to      '#{node['hana']['installpath']}/#{node['hana']['sid']}/hdbclient'
+    only_if 'test -f #{node['hana']['installpath']}/#{node['hana']['sid']}/hdbclient'
+  end
+
 else
   log "HANA Lifecycle Manager appears to be installed, so skipping this step"
 end
