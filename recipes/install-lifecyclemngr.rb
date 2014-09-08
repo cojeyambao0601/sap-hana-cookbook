@@ -65,7 +65,6 @@ end
 
   link "#{node['hana']['installpath']}/hdbclient" do
     to "#{node['hana']['installpath']}/#{node['hana']['sid']}/hdbclient"
-    only_if "test -f #{node['hana']['installpath']}/#{node['hana']['sid']}/hdbclient"
   end
 
 else
