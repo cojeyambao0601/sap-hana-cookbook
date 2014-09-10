@@ -4,7 +4,7 @@ This cookbook provides recipes for installing and updating SAP Hana database and
 
 Requirements
 ===========
-##comment
+
 ### Platform
 
 * Suse SLES 11 SP2 (check [PAM](https://service.sap.com/sap/support/pam) for changes)
