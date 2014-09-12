@@ -32,7 +32,7 @@ default['hana']['xs_https_port']  = "443"
 default['install']['tempdir']             		= "/monsoon/tmp"
 
 default['install']['repo']       				= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb"
-default['install']['productiondevice1']  	= "derotvi0066.wdf.sap.corp:/derotvi0066a_ld9252/q_files"
+default['install']['productiondevice1']  	= "derotvi0157.wdf.sap.corp:/derotvi0157a_ld9252/q_files"
 default['install']['productiondevice2']  	= "nsvf1735.wdf.sap.corp:/vol/nsvf1735a_newdb/q_newdb"
 default['install']['productionmountpoint1']  	      = "/sapmnt/production/makeresults/newdb_archive"
 default['install']['productionmountpoint2']  	      = "/sapmnt/production/newdb"
