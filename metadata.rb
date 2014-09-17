@@ -12,6 +12,6 @@ recipe           "hana::upgrade", "Upgrades an existing SAP Hana installation"
 recipe           "hana::upgrade-client", "Upgrades an existing SAP Hana client installation"
 
 depends          "nfs"
-depend           "sapinst"
+depends          "sapinst"
 
 supports         "suse"
