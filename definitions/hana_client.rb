@@ -1,9 +1,9 @@
-define :hana_client, :action => :install, :release => "1.0", :revision => nil, :sid => nil, :install_dir => nil, :service => nil do
+define :hana_client, :action => :install, :release => "1.0", :revision => nil, :sid => nil, :install_dir => nil, :sap_stop => nil, :sap_start => nil do
 
     include_recipe "hana::install-libs"
 
-    if params[:service]
-      service params[:service] do
+    if params[:sap_stop]
+      service params[:sap_stop] do
         action :stop
         only_if { params[:action] == :install || Gem::Version.new(`#{params[:install_dir]}/hdbsql -v`.split[2]) < Gem::Version.new("#{params[:release]}.#{params[:revision]}") }
       end
@@ -24,8 +24,8 @@ define :hana_client, :action => :install, :release => "1.0", :revision => nil, :
       only_if { params[:action] == :install || Gem::Version.new(`#{params[:install_dir]}/hdbsql -v`.split[2]) < Gem::Version.new("#{params[:release]}.#{params[:revision]}") }
     end
 
-    if params[:service]
-      service params[:service] do
+    if params[:sap_start]
+      service params[:sap_start] do
         action :start
       end
     end
