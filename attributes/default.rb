@@ -38,7 +38,7 @@ default['install']['productionmountpoint1']  	      = "/sapmnt/production/makere
 default['install']['productionmountpoint2']  	      = "/sapmnt/production/newdb"
 default['hana']['revision'] 					= '67'
 
-# donwload sapcar executable ...
+# donwload sapca:r executable ...
 default['install']['files']['sapcar']     			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
 default['install']['files']['hostagent'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/saphostagent/lnx_x64/7.2SP160/SAPHOSTAGENT.SAR"
 default['install']['files']['sapcryptolib']		= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/sapcryptolib/SAPCRYPTOLIB_34-10010845.SAR"
@@ -51,3 +51,8 @@ default['install']['files']['hanalifecyclemngr'] 	= node['install']['files']['li
 default['install']['files']['saphostagent'] 		= node['install']['files']['hostagent']
 default['install']['files']['afl'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_1" + "_Linux_on_x86_64.SAR"
 default['install']['files']['afl_sal'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/bobj/lumira/SAP_SAL_AFL_PATCH_1_FOR_SAP_HANA.SAR"
+
+# dataset information
+default['install']['files']['datasetsources']  = "http://moo-repo.wdf.sap.corp:8080/static/ssc/SAP/Dataset/"
+default['install']['files']['datasetnames'] = ["LUMIRA.zip"]
+default['install']['files']['deletedatasetsources'] = true

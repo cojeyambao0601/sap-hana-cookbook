@@ -52,6 +52,11 @@ The structure of ['install'].['files'].['hanadb'] archive must be a sole folder 
 
 All attributes under ['hana'].['dist'] hierarchy are related to distributed SAP Hana system installation process. Override only if you are installing a distributed system.
 
+#### Attributes related to the dataset import
+* `['install']['files']['datasetsources']`  - HTTP source of dataset file.
+* `['install']['files']['datasetnames']` - Array of dataset name present in the datasetsources folder. Example : ["LUMIRA.zip", "SFLIGHT.zip", "COPA.zip", "FOODMART.zip"]
+* `['install']['files']['deletedatasetsources']` - Delete or not dataset source when import is done. Default value is true
+
 
 ---
 Recipes
@@ -76,6 +81,10 @@ Recipe to add a worker node to existing SAP Hana distributed cluster. To use thi
 
 ### hana::install-lifecyclemngr
 Installs SAP Hana lifecycle manager on the node. The lifecycle manager will be installed into `['hana']['installpath']`/`['hana']['sid']`/HLM. The lifecycle manager is dependent on an installed SAP Hana and will trigger an install if SAP Hana does not exist. 
+
+### hana::import-dataset
+Import selected dataset on the HANA database.
+
 
 ---
 Usage
@@ -170,6 +179,42 @@ Then use the following role to add new worker nodes to the cluster:
 	)
 
 	run_list "recipe[hana::install-worker]"
+
+### Import dataset on a node
+To import dataset on a node, please use the following recipe:
+
+  	name "import-dataset"
+  	description "Import dataset in a node"
+
+  	override_attributes(
+  	  "install": {
+          "files": {
+            "datasetnames": [
+              "LUMIRA.zip",
+              "SFLIGHT.zip",
+              "COPA.zip",
+              "FOODMART.zip"
+            ]
+          }
+  	)
+
+  	run_list "recipe[hana::import-dataset]"
+
+Please note that for big dataset, you need to change the "tempdir" attribute as default one is as only 7Go free:
+
+
+     	override_attributes(
+      	  "install": {
+              "files": {
+                "datasetnames": [
+                  "LUMIRA.zip",
+                  "SFLIGHT.zip",
+                  "COPA.zip",
+                  "FOODMART.zip"
+                ]
+              },
+          "tempdir": "/usr/sap"
+      	)
 
 ---
 Provided LWRP
