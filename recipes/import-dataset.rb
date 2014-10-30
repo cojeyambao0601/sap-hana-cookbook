@@ -11,7 +11,7 @@ directory "#{node['install']['tempdir']}/dataset" do
 end
 
 if node['install']['files']['datasetnames'].is_a?(String) then
-  node['install']['files']['datasetnames'] = [node['install']['files']['datasetnames']]
+  node.default['install']['files']['datasetnames'] = [node['install']['files']['datasetnames']]
 end
 
 node['install']['files']['datasetnames'].each do |currentdatasetname|
