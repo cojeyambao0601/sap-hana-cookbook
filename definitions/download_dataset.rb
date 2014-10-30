@@ -22,15 +22,14 @@ define :download_dataset, :datasetname => nil do
     not_if { ::Dir.exists?("#{node['install']['tempdir']}/dataset/#{File.basename(params[:datasetname],File.extname(params[:datasetname]))}/") }
   end
 
-  if node['install']['files']['deletedatasetsources']
-    bash "chmod " do
+
+    bash "chmod 777 to dataset folder" do
       code <<-EOS
           chmod -R 777 #{node['install']['tempdir']}/dataset/
       EOS
       action :run
     end
 
-  end
 
 
 

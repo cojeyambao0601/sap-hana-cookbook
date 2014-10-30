@@ -54,7 +54,7 @@ All attributes under ['hana'].['dist'] hierarchy are related to distributed SAP 
 
 #### Attributes related to the dataset import
 * `['install']['files']['datasetsources']`  - HTTP source of dataset file.
-* `['install']['files']['datasetnames']` - Array of dataset name present in the datasetsources folder. Example : ["LUMIRA.zip", "SFLIGHT.zip", "COPA.zip", "FOODMART.zip"]
+* `['install']['files']['datasetnames']` - Array of dataset name present in the datasetsources folder. Example : ["LUMIRA.zip", "SFLIGHT.zip", "COPA.zip", "FOODMART.zip"]. Default value is [LUMIRA.ZIP]
 * `['install']['files']['deletedatasetsources']` - Delete or not dataset source when import is done. Default value is true
 
 
@@ -83,7 +83,7 @@ Recipe to add a worker node to existing SAP Hana distributed cluster. To use thi
 Installs SAP Hana lifecycle manager on the node. The lifecycle manager will be installed into `['hana']['installpath']`/`['hana']['sid']`/HLM. The lifecycle manager is dependent on an installed SAP Hana and will trigger an install if SAP Hana does not exist. 
 
 ### hana::import-dataset
-Import selected dataset on the HANA database.
+Import selected dataset on the HANA database. Dataset sources need to be a ZIP file of one or multiple flat dataset.
 
 
 ---
