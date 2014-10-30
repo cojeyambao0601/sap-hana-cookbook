@@ -16,7 +16,7 @@ if datasetnames.is_a?(String) then
   datasetnames = [datasetnames]
 end
 
-node['install']['files']['datasetnames'].each do |currentdatasetname|
+datasetnames.each do |currentdatasetname|
 
 
   download_dataset "Extract data set #{currentdatasetname}" do
