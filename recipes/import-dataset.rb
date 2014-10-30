@@ -10,8 +10,10 @@ directory "#{node['install']['tempdir']}/dataset" do
   recursive true
 end
 
-if node['install']['files']['datasetnames'].is_a?(String) then
-  node.default['install']['files']['datasetnames'] = [node['install']['files']['datasetnames']]
+datasetnames = node['install']['files']['datasetnames']
+
+if datasetnames.is_a?(String) then
+  datasetnames = [datasetname]
 end
 
 node['install']['files']['datasetnames'].each do |currentdatasetname|
