@@ -13,7 +13,7 @@ end
 datasetnames = node['install']['files']['datasetnames']
 
 if datasetnames.is_a?(String) then
-  datasetnames = [datasetname]
+  datasetnames = [datasetnames]
 end
 
 node['install']['files']['datasetnames'].each do |currentdatasetname|
