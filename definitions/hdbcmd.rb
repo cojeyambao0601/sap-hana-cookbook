@@ -65,10 +65,17 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
     command "#{params[:exe]}"
   end
 
-  directory "Delete temporary directory" do
-    path "#{node['install']['tempdir']}"
-    recursive true
-    action :delete
+  # delete install directory unless other installations (e.g. AFL) still need it
+  ################ can't convert nil into string ################################################################## hier weiter
+  Chef::Log.info "--- Chef:     node[:hana][:retain_instdir] = " + node[:hana][:retain_instdir]
+  log            "--- Converge: node[:hana][:retain_instdir] = " + node[:hana][:retain_instdir]
+
+  if "#{node[:hana][:retain_instdir]}" != "true"  
+    directory "Delete temporary directory" do
+      path "#{node['install']['tempdir']}"
+      recursive true
+      action :delete
+    end
   end
 
 end
