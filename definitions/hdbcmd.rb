@@ -61,17 +61,17 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
   end
 
   execute "Start install / upgrade HANA server / client" do
+    Chef::Log.info "#{params[:exe]}"
     cwd "#{node['install']['tempdir']}/#{params[:bin_dir]}"
     command "#{params[:exe]}"
   end
 
-  # delete install directory unless other installations (e.g. AFL) still need it
-  ################ can't convert nil into string ################################################################## hier weiter
-  Chef::Log.info "--- Chef:     node[:hana][:retain_instdir] = " + node[:hana][:retain_instdir]
-  log            "--- Converge: node[:hana][:retain_instdir] = " + node[:hana][:retain_instdir]
-
-  if "#{node[:hana][:retain_instdir]}" != "true"  
-    directory "Delete temporary directory" do
+  # Note: readymade-XSauto requires the if-case. Contact D023081. 
+  if node['hana']['retain_instdir'] 
+    Chef::Log.info "Retaining installation directory for sub-sequent AFL installation."
+  else
+    directory "Delete installation directory" do
+      Chef::Log.info "Deleting installation directory."
       path "#{node['install']['tempdir']}"
       recursive true
       action :delete
