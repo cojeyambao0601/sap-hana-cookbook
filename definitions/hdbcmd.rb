@@ -70,12 +70,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
   if node['hana']['retain_instdir'] 
     Chef::Log.info "Retaining installation directory for sub-sequent AFL installation."
   else
-    directory "Delete installation directory" do
-      Chef::Log.info "Deleting installation directory."
-      path "#{node['install']['tempdir']}"
-      recursive true
-      action :delete
-    end
+    rmtempdir "clean up /monsoon/tmp directory"
   end
 
 end
