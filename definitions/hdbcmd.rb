@@ -20,24 +20,36 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
       command "wget --progress=dot:giga #{params[:bin_file_url]} -O SAP_HANA_PACKAGE.SAR"
     end
   else
-    directory "#{node['install']['productionmountpoint1']}" do
-      action :create
-      recursive true 
-    end
-    mount "#{node['install']['productionmountpoint1']}" do
-      device "#{node['install']['productiondevice1']}"
-      fstype "nfs"
-      action :mount
-    end
-    directory "#{node['install']['productionmountpoint2']}" do
-      action :create
-      recursive true 
-    end
-    mount "#{node['install']['productionmountpoint2']}" do
-      device "#{node['install']['productiondevice2']}"
-      fstype "nfs"
-      action :mount
-    end
+     directory "#{node['install']['productionmountpoint1']}" do
+       action :create
+       recursive true 
+     end
+     mount "#{node['install']['productionmountpoint1']}" do
+       device "#{node['install']['productiondevice1']}"
+       fstype "nfs"
+       action :mount
+     end
+
+     directory "#{node['install']['productionmountpoint2']}" do
+       action :create
+       recursive true 
+     end
+     mount "#{node['install']['productionmountpoint2']}" do
+       device "#{node['install']['productiondevice2']}"
+       fstype "nfs"
+       action :mount
+     end
+
+     directory "#{node['install']['productionmountpoint3']}" do
+       action :create
+       recursive true 
+     end
+     mount "#{node['install']['productionmountpoint3']}" do
+       device "#{node['install']['productiondevice3']}"
+       fstype "nfs"
+       action :mount
+     end
+
     execute "Get Hana binary package" do
       cwd "#{node['install']['tempdir']}"
       command "cp #{params[:bin_file_url]} SAP_HANA_PACKAGE.SAR"
