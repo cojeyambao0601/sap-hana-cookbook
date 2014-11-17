@@ -34,7 +34,7 @@ default['install']['tempdir']             		= "/monsoon/tmp"
 default['install']['repo']       				= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb"
 default['install']['productiondevice1']  	= "derotvi0157.wdf.sap.corp:/derotvi0157a_ld9252/q_files"
 default['install']['productiondevice2']  	= "nsvf1735.wdf.sap.corp:/vol/nsvf1735a_newdb/q_newdb"
-default['install']['productiondevice3']   = "derotvi0010.wdf.sap.corp:/derotvi0010a_LCAPPS/q_files "
+default['install']['productiondevice3']   = "derotvi0010.wdf.sap.corp:/derotvi0010a_LCAPPS/q_files"
 
 default['install']['productionmountpoint1'] = "/sapmnt/production/makeresults/newdb_archive"
 default['install']['productionmountpoint2'] = "/sapmnt/production/newdb"
