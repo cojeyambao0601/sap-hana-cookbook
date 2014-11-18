@@ -111,7 +111,8 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
        fstype "nfs"
        action :umount
      end
-
+  end
+  
 # /VERSUCH
 
   # Note: readymade-XSauto requires the if-case. Contact D023081. 
