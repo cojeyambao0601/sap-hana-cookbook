@@ -26,7 +26,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
      end
      mount "#{node['install']['productionmountpoint1']}" do
        device "#{node['install']['productiondevice1']}"
-       only_if "mountpoint -q #{node['install']['productionmountpoint1']}"
+       not_if "mountpoint -q #{node['install']['productionmountpoint1']}"
        fstype "nfs"
        action :mount
      end
@@ -37,7 +37,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
      end
      mount "#{node['install']['productionmountpoint2']}" do
        device "#{node['install']['productiondevice2']}"
-       only_if "mountpoint -q #{node['install']['productionmountpoint2']}"
+       not_if "mountpoint -q #{node['install']['productionmountpoint2']}"
        fstype "nfs"
        action :mount
      end
@@ -48,7 +48,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
      end
      mount "#{node['install']['productionmountpoint3']}" do
        device "#{node['install']['productiondevice3']}"
-       only_if "mountpoint -q #{node['install']['productionmountpoint3']}"
+       not_if "mountpoint -q #{node['install']['productionmountpoint3']}"
        fstype "nfs"
        action :mount
      end
@@ -80,29 +80,6 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
     cwd "#{node['install']['tempdir']}/#{params[:bin_dir]}"
     command "#{params[:exe]}"
   end
-
-
-## # VERSUCH
-## 
-##   if !params[:bin_file_url].start_with?("http")
-##      mount "#{node['install']['productionmountpoint1']}" do
-##        device "#{node['install']['productiondevice1']}"
-##        fstype "nfs"
-##        action :umount
-##      end
-##      mount "#{node['install']['productionmountpoint2']}" do
-##        device "#{node['install']['productiondevice2']}"
-##        fstype "nfs"
-##        action :umount
-##      end
-##      mount "#{node['install']['productionmountpoint3']}" do
-##        device "#{node['install']['productiondevice3']}"
-##        fstype "nfs"
-##        action :umount
-##      end
-##   end
-## 
-## # /VERSUCH
 
   # Note: readymade-XSauto requires the if-case. Contact D023081. 
   if node['hana']['retain_instdir'] 
