@@ -26,6 +26,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
      end
      mount "#{node['install']['productionmountpoint1']}" do
        device "#{node['install']['productiondevice1']}"
+       only_if "mountpoint -q #{node['install']['productionmountpoint1']}"
        fstype "nfs"
        action :mount
      end
@@ -36,6 +37,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
      end
      mount "#{node['install']['productionmountpoint2']}" do
        device "#{node['install']['productiondevice2']}"
+       only_if "mountpoint -q #{node['install']['productionmountpoint2']}"
        fstype "nfs"
        action :mount
      end
@@ -46,6 +48,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
      end
      mount "#{node['install']['productionmountpoint3']}" do
        device "#{node['install']['productiondevice3']}"
+       only_if "mountpoint -q #{node['install']['productionmountpoint3']}"
        fstype "nfs"
        action :mount
      end
