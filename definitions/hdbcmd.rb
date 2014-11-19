@@ -79,27 +79,27 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
   end
 
 
-# VERSUCH
-
-  if !params[:bin_file_url].start_with?("http")
-     mount "#{node['install']['productionmountpoint1']}" do
-       device "#{node['install']['productiondevice1']}"
-       fstype "nfs"
-       action :umount
-     end
-     mount "#{node['install']['productionmountpoint2']}" do
-       device "#{node['install']['productiondevice2']}"
-       fstype "nfs"
-       action :umount
-     end
-     mount "#{node['install']['productionmountpoint3']}" do
-       device "#{node['install']['productiondevice3']}"
-       fstype "nfs"
-       action :umount
-     end
-  end
-
-# /VERSUCH
+## # VERSUCH
+## 
+##   if !params[:bin_file_url].start_with?("http")
+##      mount "#{node['install']['productionmountpoint1']}" do
+##        device "#{node['install']['productiondevice1']}"
+##        fstype "nfs"
+##        action :umount
+##      end
+##      mount "#{node['install']['productionmountpoint2']}" do
+##        device "#{node['install']['productiondevice2']}"
+##        fstype "nfs"
+##        action :umount
+##      end
+##      mount "#{node['install']['productionmountpoint3']}" do
+##        device "#{node['install']['productiondevice3']}"
+##        fstype "nfs"
+##        action :umount
+##      end
+##   end
+## 
+## # /VERSUCH
 
   # Note: readymade-XSauto requires the if-case. Contact D023081. 
   if node['hana']['retain_instdir'] 
