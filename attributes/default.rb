@@ -34,12 +34,15 @@ default['install']['tempdir']             		= "/monsoon/tmp"
 default['install']['repo']       				= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb"
 default['install']['productiondevice1']  	= "derotvi0157.wdf.sap.corp:/derotvi0157a_ld9252/q_files"
 default['install']['productiondevice2']  	= "nsvf1735.wdf.sap.corp:/vol/nsvf1735a_newdb/q_newdb"
-default['install']['productionmountpoint1']  	      = "/sapmnt/production/makeresults/newdb_archive"
-default['install']['productionmountpoint2']  	      = "/sapmnt/production/newdb"
+default['install']['productiondevice3']   = "derotvi0010.wdf.sap.corp:/derotvi0010a_LCAPPS/q_files"
+
+default['install']['productionmountpoint1'] = "/sapmnt/production/makeresults/newdb_archive"
+default['install']['productionmountpoint2'] = "/sapmnt/production/newdb"
+default['install']['productionmountpoint3'] = "/sapmnt/production/NEWDB_SDK"
 default['hana']['revision'] 					= '67'
 
-# donwload sapca:r executable ...
-default['install']['files']['sapcar']     			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
+# download sapcar executable ...
+default['install']['files']['sapcar']   			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
 default['install']['files']['hostagent'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/saphostagent/lnx_x64/7.2SP160/SAPHOSTAGENT.SAR"
 default['install']['files']['sapcryptolib']		= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/sapcryptolib/SAPCRYPTOLIB_34-10010845.SAR"
 
