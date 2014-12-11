@@ -3,7 +3,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
   # check for platform and install libraries
   include_recipe "hana::install-libs"
 
-  unless $already_done
+  # unless $already_done
     directory "Create temporary directory" do
       path "#{node['install']['tempdir']}"
       action :create
@@ -14,7 +14,7 @@ define :hdbcmd, :exe => "", :bin_dir => "", :bin_file_url => "" do
       cwd "#{node['install']['tempdir']}"
       command "wget #{node['install']['files']['sapcar']}"
     end
-  end
+  # end
 
   if params[:bin_file_url].start_with?("http")
     execute "Get Hana binary package" do
