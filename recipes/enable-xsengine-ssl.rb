@@ -87,7 +87,7 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
         code <<-EOH
 	kill -9 `pidof hdbxsengine`
 	kill -9 `pidof sapwebdisp_hdb`
-	sleep 15
+	sleep 30
 	EOH
   end
     
