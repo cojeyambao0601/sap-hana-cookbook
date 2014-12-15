@@ -1,3 +1,4 @@
+name             "hana"
 maintainer       "Andreas Bloemeke, Thomas Graichen, Harald Kuersten"
 maintainer_email "andreas.bloemeke@sap.com, thomas.graichen@sap.com, harald.kuersten@sap.com"
 license          ""
