@@ -15,24 +15,31 @@ define :server, :exe => "" do
     end
   end
 
-  # check if a custom data path is defined - if yes, we add the corresponding option to the installer
-  if "#{node['hana']['datapath']}" != ""
-    Chef::Log.info "a custom data path #{node['hana']['datapath']} is defined and will be used for the installation"
-    directory node['hana']['datapath'] do
-      recursive true
-      action :create
+  # do the thext two things not in the case of the upgrader
+  if hana_install_command.include? 'hdbupd'
+    Chef::Log.info "update detected, thus skipping the data path and log path cmdline options"
+  else
+    Chef::Log.info "non update detected, thus checking the data path and log path cmdline options"
+    # check if a custom data path is defined - if yes, we add the corresponding option to the installer
+    if "#{node['hana']['datapath']}" != ""
+      Chef::Log.info "a custom data path #{node['hana']['datapath']} is defined and will be used for the installation"
+      directory node['hana']['datapath'] do
+        recursive true
+        action :create
+      end
+      hana_install_command = "#{hana_install_command} --datapath=#{node['hana']['datapath']}"
     end
-    hana_install_command = "#{hana_install_command} --datapath=#{node['hana']['datapath']}"
-  end
 
-  # check if a custom log path is defined - if yes, we add the corresponding option to the installer
-  if "#{node['hana']['logpath']}" != ""
-    Chef::Log.info "a custom log path #{node['hana']['logpath']} is defined and will be used for the installation"
-    directory node['hana']['logpath'] do
-      recursive true
-      action :create
+    # check if a custom log path is defined - if yes, we add the corresponding option to the installer
+    if "#{node['hana']['logpath']}" != ""
+      Chef::Log.info "a custom log path #{node['hana']['logpath']} is defined and will be used for the installation"
+      directory node['hana']['logpath'] do
+        recursive true
+        action :create
+      end
+      hana_install_command = "#{hana_install_command} --logpath=#{node['hana']['logpath']}"
     end
-    hana_install_command = "#{hana_install_command} --logpath=#{node['hana']['logpath']}"
+
   end
   
   # check if a virtual hostname is defined - if yes, we add the corresponding option to the installer
