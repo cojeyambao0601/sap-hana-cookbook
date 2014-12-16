@@ -2,7 +2,11 @@
 # Recipe:: upgrade
 # Upgrades an existing SAP Hana on the node.
 
-hana_install_command = "./hdbupd --batch --sid=#{node['hana']['sid']} --password=#{node['hana']['password']} --system_user_password=#{node['hana']['syspassword']} --nostart=off --import_content=#{node['hana']['import_content']} --root_user=#{node['hana']['dist']['2ndroot']} --root_password=#{node['hana']['dist']['2ndrootclearpwd']}"
+hana_install_command = "./hdbupd --batch --sid=#{node['hana']['sid']} --password=#{node['hana']['password']} --system_user_password=#{node['hana']['syspassword']} --nostart=#{node['hana']['nostart']} --import_content=#{node['hana']['import_content']}"
+
+if "#{node['hana']['dist']['2ndroot']}" != ""
+  hana_install_command = "#{hana_install_command} --root_user=#{node['hana']['dist']['2ndroot']} --root_password=#{node['hana']['dist']['2ndrootclearpwd']}"
+end
 
 server "run upgrade hana node" do
   exe "#{hana_install_command}"
