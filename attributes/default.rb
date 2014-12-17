@@ -39,7 +39,7 @@ default['install']['productiondevice3']   = "derotvi0010.wdf.sap.corp:/derotvi00
 default['install']['productionmountpoint1'] = "/sapmnt/production/makeresults/newdb_archive"
 default['install']['productionmountpoint2'] = "/sapmnt/production/newdb"
 default['install']['productionmountpoint3'] = "/sapmnt/production/NEWDB_SDK"
-default['hana']['revision'] 					= '67'
+default['hana']['revision'] 					= '090'
 
 # download sapcar executable ...
 default['install']['files']['sapcar']   			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
@@ -52,7 +52,7 @@ default['install']['files']['hanaclient'] 			= node['install']['repo'] + "/1.0."
 default['install']['files']['lifecyclemngr'] 		= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPHANALM07P_12-10012745.SAR"
 default['install']['files']['hanalifecyclemngr'] 	= node['install']['files']['lifecyclemngr']
 default['install']['files']['saphostagent'] 		= node['install']['files']['hostagent']
-default['install']['files']['afl'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_1" + "_Linux_on_x86_64.SAR"
+default['install']['files']['afl'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
 default['install']['files']['afl_sal'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/bobj/lumira/SAP_SAL_AFL_PATCH_1_FOR_SAP_HANA.SAR"
 
 # dataset information
