@@ -56,43 +56,23 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
     not_if {File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node['hostname']}/sec/sapsrv.pse")}
   end
 
-  Chef::Log.info "################# Create sapwebdisp.pfl for ssl definition ###################"
-  template "#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node['hostname']}/wdisp/sapwebdisp.pfl" do
-    source "wdisp/sapwebdisp.pfl.erb"
-    owner "#{node['hana']['sid']}adm".downcase
-      variables(
-        :instance => node['hana']['instance'],
-        :sid => node['hana']['sid'],
-        :xs_http_port => node['hana']['xs_http_port'],
-        :xs_https_port => node['hana']['xs_https_port'],
-        :hostname => node['hostname'],
-        :installpath => node['hana']['installpath']
-      )
-  end
-
-  bash "activate external icmbnd" do
-    cwd "#{node['hana']['installpath']}/#{node['hana']['sid']}/exe/linuxx86_64/hdb"
-    code <<-EOH
-      mv icmbnd.new icmbnd
-      chown root:sapsys icmbnd
-      chmod 4750 icmbnd
-    EOH
-  end
-  
-
-  bash "restart webdispatcher and xsengine" do
-    user "#{node['hana']['sid']}adm".downcase
-    group "sapsys"
-    cwd "#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node['hostname']}/trace"
-        code <<-EOH
-	kill -9 `pidof hdbxsengine`
-	kill -9 `pidof sapwebdisp_hdb`
-	sleep 30
-	EOH
-  end
-    
 else
   Chef::Log.info "################# pse file already exists, doing nothing ###################"
   log "################# Seems sapsrv.pse keystore file already exists, for new cert import delete #{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node['hostname']}/sec/sapsrv.pse first ###################"
-
 end
+
+Chef::Log.info "################# Create sapwebdisp.pfl for ssl definition ###################"
+template "#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node['hostname']}/wdisp/sapwebdisp.pfl" do
+  source "wdisp/sapwebdisp.pfl.erb"
+  owner "#{node['hana']['sid']}adm".downcase
+    variables(
+      :instance => node['hana']['instance'],
+      :sid => node['hana']['sid'],
+      :xs_http_port => node['hana']['xs_http_port'],
+      :xs_https_port => node['hana']['xs_https_port'],
+      :hostname => node['hostname'],
+      :installpath => node['hana']['installpath']
+    )
+end
+
+include_recipe "hana::fix-icmbnd-issue"

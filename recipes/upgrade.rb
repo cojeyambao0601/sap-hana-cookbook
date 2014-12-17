@@ -14,3 +14,6 @@ file "Create installation completion flag" do
   path "#{node['hana']['installpath']}/#{node['hana']['sid']}/install.finished"
   action :create
 end
+
+# hdbupd doesn't update the icmbnd version applied. Fix this.
+include_recipe "hana::fix-icmbnd-issue"
