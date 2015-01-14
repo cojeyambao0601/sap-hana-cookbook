@@ -14,18 +14,28 @@ else
 end
 
 # hdbupd needs a user with id=0 to update a worker in a distributed setup
-user "#{node['hana']['dist']['2ndroot']}" do
-  supports :non_unique => true
-  comment "second root user"
-  home "/root"
-  uid 0
-  gid 0
-  shell "/bin/bash"
-  password "#{node['hana']['dist']['2ndrootpwd']}"
+if "#{node['hana']['dist']['2ndroot']}" != ""
+  user "#{node['hana']['dist']['2ndroot']}" do
+    supports :non_unique => true
+    comment "second root user"
+    home "/root"
+    uid 0
+    gid 0
+    shell "/bin/bash"
+    password "#{node['hana']['dist']['2ndrootpwd']}"
+  end
+end
+
+# check if a hostname was specified
+if "#{node['hana']['hostname']}" != ""
+  Chef::Log.info "a custom hostname #{node['hana']['hostname']} is defined and will be used for the installation"
+  hostname = "#{node['hana']['hostname']}"
+else
+  hostname = node[:hostname]
 end
   
 # make sure there is no hana worker installed yet on this machine
-if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node[:hostname]}/install.finished")
+if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{hostname}/install.finished")
 
   # check if install of the master node is finished, by checking the install.finish file
   ruby_block "Wait for the HANA Master installation to finish" do
@@ -52,7 +62,7 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
   end
 
   # build hana install command
-  hana_install_worker_command = "./hdbaddhost --batch --sid=#{node['hana']['sid']} --hostname=#{node[:hostname]} --sapmnt=#{node['hana']['installpath']} --password=#{node['hana']['password']} --role=worker"
+  hana_install_worker_command = "./hdbaddhost --batch --sid=#{node['hana']['sid']} --hostname=#{hostname} --sapmnt=#{node['hana']['installpath']} --password=#{node['hana']['password']} --role=worker"
   if "#{node['hana']['checkhardware']}".chomp != "true"
     #hana_install_worker_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{hana_install_worker_command} --ignore=#{node['hana']['checkstoignore']}"
     hana_install_worker_command = "export HDB_COMPILEBRANCH=1 && export HDB_IGNORE_HANA_PLATFORM_CHECK=1 && #{hana_install_worker_command}"
@@ -68,7 +78,7 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{nod
   # write a file to the fs, which will state that the installation is finished, so if any worker installation runs, it can be sure
   # that the installation of this worker was finished successfully
   file "Create installation completion flag" do
-    path "#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{node[:hostname]}/install.finished"
+    path "#{node['hana']['installpath']}/#{node['hana']['sid']}/HDB#{node['hana']['instance']}/#{hostname}/install.finished"
     action :create
   end
 

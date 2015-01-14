@@ -10,6 +10,7 @@ default['hana']['checkhardware']  = "true"
 default['hana']['checkstoignore'] = "check_platform,check_diskspace,check_min_mem"
 default['hana']['clientsid']      = "true"
 default['hana']['import_content'] = "on"
+default['hana']['nostart']        = "off"
 default['hana']['hostname']       = ""
 
 # needed for distributed hana cluster
@@ -29,12 +30,12 @@ default['hana']['import_content'] = "on"
 default['hana']['xs_http_port']   = "80" + node['hana']['instance']
 default['hana']['xs_https_port']  = "443"
 
-default['install']['tempdir']             		= "/monsoon/tmp"
+default['install']['tempdir']               = "/monsoon/tmp"
 
-default['install']['repo']       				= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb"
-default['install']['productiondevice1']  	= "derotvi0157.wdf.sap.corp:/derotvi0157a_ld9252/q_files"
-default['install']['productiondevice2']  	= "nsvf1735.wdf.sap.corp:/vol/nsvf1735a_newdb/q_newdb"
-default['install']['productiondevice3']   = "derotvi0010.wdf.sap.corp:/derotvi0010a_LCAPPS/q_files"
+default['install']['repo']                  = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb"
+default['install']['productiondevice1']     = "derotvi0157.wdf.sap.corp:/derotvi0157a_ld9252/q_files"
+default['install']['productiondevice2']     = "nsvf1735.wdf.sap.corp:/vol/nsvf1735a_newdb/q_newdb"
+default['install']['productiondevice3']     = "derotvi0010.wdf.sap.corp:/derotvi0010a_LCAPPS/q_files"
 
 default['install']['productionmountpoint1'] = "/sapmnt/production/makeresults/newdb_archive"
 default['install']['productionmountpoint2'] = "/sapmnt/production/newdb"
@@ -42,20 +43,20 @@ default['install']['productionmountpoint3'] = "/sapmnt/production/NEWDB_SDK"
 default['hana']['revision'] 					= '090'
 
 # download sapcar executable ...
-default['install']['files']['sapcar']   			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
-default['install']['files']['hostagent'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/saphostagent/lnx_x64/7.2SP160/SAPHOSTAGENT.SAR"
-default['install']['files']['sapcryptolib']		= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/sapcryptolib/SAPCRYPTOLIB_34-10010845.SAR"
+default['install']['files']['sapcar']               = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPCAR"
+default['install']['files']['hostagent']            = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/saphostagent/lnx_x64/7.2SP160/SAPHOSTAGENT.SAR"
+default['install']['files']['sapcryptolib']         = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/sapcryptolib/SAPCRYPTOLIB_34-10010845.SAR"
 
 # construct url from install repo
-default['install']['files']['hanadb'] 				= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_DATABASE100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
-default['install']['files']['hanaclient'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_CLIENT100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
-default['install']['files']['lifecyclemngr'] 		= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPHANALM07P_12-10012745.SAR"
-default['install']['files']['hanalifecyclemngr'] 	= node['install']['files']['lifecyclemngr']
-default['install']['files']['saphostagent'] 		= node['install']['files']['hostagent']
-default['install']['files']['afl'] 			= node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
-default['install']['files']['afl_sal'] 			= "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/bobj/lumira/SAP_SAL_AFL_PATCH_1_FOR_SAP_HANA.SAR"
+default['install']['files']['hanadb']               = node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_DATABASE100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
+default['install']['files']['hanaclient']           = node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_CLIENT100_" + node['hana']['revision'] + "_Linux_on_x86_64.SAR"
+default['install']['files']['lifecyclemngr']        = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/newdb/SAPHANALM07P_12-10012745.SAR"
+default['install']['files']['hanalifecyclemngr']    = node['install']['files']['lifecyclemngr']
+default['install']['files']['saphostagent']         = node['install']['files']['hostagent']
+default['install']['files']['afl']                  = node['install']['repo'] + "/1.0." + node['hana']['revision'] + "/SAP_HANA_AFL100_" + node['hana']['revision'] + "_1" + "_Linux_on_x86_64.SAR"
+default['install']['files']['afl_sal']              = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/hana/bobj/lumira/SAP_SAL_AFL_PATCH_1_FOR_SAP_HANA.SAR"
 
 # dataset information
-default['install']['files']['datasetsources']  = "http://moo-repo.wdf.sap.corp:8080/static/ssc/SAP/Dataset/"
-default['install']['files']['datasetnames'] = ["LUMIRA.zip"]
+default['install']['files']['datasetsources']       = "http://moo-repo.wdf.sap.corp:8080/static/ssc/SAP/Dataset/"
+default['install']['files']['datasetnames']         = ["LUMIRA.zip"]
 default['install']['files']['deletedatasetsources'] = true
