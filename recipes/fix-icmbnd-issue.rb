@@ -5,7 +5,7 @@
 # no longer contain the icmbnd-related defect.   
 
 bash "activate external icmbnd" do
-  cwd "#{node['hana']['installpath']}/#{node['hana']['sid']}/exe/linuxx86_64/hdb"
+  cwd "#{node['hana']['installpath']}/#{node['hana']['sid']}/SYS/exe/hdb"
   code <<-EOH
     cp icmbnd.new icmbnd
     chown root:sapsys icmbnd
