@@ -200,7 +200,7 @@ To import dataset on a node, please use the following recipe:
 
   	run_list "recipe[hana::import-dataset]"
 
-Please note that for big dataset, you need to change the "tempdir" attribute as default one is as only 7Go free:
+Please note that for big dataset, you need to change the "tempdir" attribute as default one has only 7GB free:
 
 
      	override_attributes(
