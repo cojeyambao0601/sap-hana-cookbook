@@ -19,4 +19,4 @@ else
   Chef::Log.info "#{cookbook_name}::#{recipe_name} found #{node['memory']['total']} RAM"
 end
 
-  Chef::Log.info "continuing execution ..."
+  Chef::Log.info "Prequisite check completes successfuly - continuing execution ..."
