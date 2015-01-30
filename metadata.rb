@@ -1,10 +1,10 @@
 name             "hana"
-maintainer       "Andreas Bloemeke, Thomas Graichen, Harald Kuersten"
-maintainer_email "andreas.bloemeke@sap.com, thomas.graichen@sap.com, harald.kuersten@sap.com"
+maintainer       "Yael Shoval"
+maintainer_email "yael.shoval@sap.com"
 license          ""
 description      "Install/upgrade SAP Hana and SAP Hana client"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "2.02.37"
+version          "2.02.38"
 recipe           "hana::install", "Installs a vanilla SAP Hana on the node"
 recipe           "hana::install-worker", "Installs a vanilla SAP Hana worker on the node"
 recipe           "hana::install-client", "Installs SAP Hana client on the node"
