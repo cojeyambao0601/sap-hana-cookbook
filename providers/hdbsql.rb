@@ -33,12 +33,12 @@ end
 action :run do
 
     command_to_execute = "#{node[:hana][:installpath]}/hdbclient/hdbsql" + print_sql_commands + print_table_header + "-n #{@new_resource.host} -i #{@new_resource.instance_number} -m -u #{@new_resource.username} -p"
-    command_for_logging = "#{command_to_execute} ********* " + output_file_path
+    command_for_logging = "#{command_to_execute} *********" + output_file_path
     command_to_execute = "#{command_to_execute} #{@new_resource.password}" + output_file_path
 
     if @new_resource.sql_command != ""
-        command_to_execute = "#{command_to_execute} \'#{@new_resource.sql_command}\'"
-        command_for_logging = "#{command_for_logging} \'#{@new_resource.sql_command}\'"
+        command_to_execute = "#{command_to_execute} \"#{@new_resource.sql_command}\""
+        command_for_logging = "#{command_for_logging} \"#{@new_resource.sql_command}\""
     else
         if @new_resource.sql_file_path != ""
             command_to_execute = "#{command_to_execute} -c '#{@new_resource.sql_file_command_separator}' -I #{@new_resource.sql_file_path}"
