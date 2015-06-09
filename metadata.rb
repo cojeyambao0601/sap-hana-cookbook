@@ -11,6 +11,7 @@ recipe           "hana::install-client", "Installs SAP Hana client on the node"
 recipe           "hana::install-lifecyclemngr", "Installs SAP Hana lifecycle manager on the node"
 recipe           "hana::upgrade", "Upgrades an existing SAP Hana installation"
 recipe           "hana::upgrade-client", "Upgrades an existing SAP Hana client installation"
+recipe           "hana::install-s4h-db-cal", "installs a S4H HANA DB from a CAL image"
 
 depends          "nfs"
 depends          "sapinst"

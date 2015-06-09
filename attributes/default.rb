@@ -13,6 +13,17 @@ default['hana']['import_content'] = "on"
 default['hana']['nostart']        = "off"
 default['hana']['hostname']       = ""
 
+# needed for S4H
+default['s4h']['install']['repo'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/s4h"
+default[:s4h][:product]         = "pc"
+default[:s4h][:version]        = "1503"
+default[:s4h][:media] = ['DBLOG',
+                         'DBDATA',
+                         'DBEXE']
+default[:s4h][:media_dir]         = "/hana/files"
+default[:saplvm][:mountpoint][:first] = "/hana"
+## S4H needs all files in /hana/... and not /usr/sap
+
 # needed for distributed hana cluster
 default['hana']['dist']['sharedvolume']         = ""
 default['hana']['dist']['sharedmountoptions']   = ""
