@@ -21,7 +21,9 @@ default[:s4h][:media] = ['DBLOG',
                          'DBDATA',
                          'DBEXE']
 default[:s4h][:media_dir]         = "/hana/files"
+default[:s4g][:db][:passsourse] = 'VA1MPwd_'
 default[:saplvm][:mountpoint][:first] = "/hana"
+
 ## S4H needs all files in /hana/... and not /usr/sap
 
 # needed for distributed hana cluster

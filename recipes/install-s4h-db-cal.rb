@@ -2,10 +2,10 @@
 # Recipe:: install-s4h-db-cal
 # Installs SAP Hana DB, for S4HANA, from a CAL image.
 
-#ENV["TMPDIR"] = node[:sapinst][:sapprepare][:tmp_dir] if node[:sapinst][:sapprepare] && node[:sapinst][:sapprepare][:tmp_dir]
-ENV["TMPDIR"] = "/hana"
+Chef::Log.info "Executing #{cookbook_name}::#{recipe_name}"
 
-#repo_dir = "#{node['s4h']['install']['repo']}/#{node['s4h']['product']}/#{node['s4h']['revision']}"
+#needed for sap_media definition, all files will be downloaded to /hana insteaad of tmp
+ENV["TMPDIR"] = "/hana"
 
 repodir = "static/monsoon/sap/s4hana/pc/1503"
 
@@ -24,6 +24,7 @@ link "/usr/sap" do
   to "/hana/usr_sap"
 end
 
+#download all *.SAR files of the CAL image: DBLOG, DBDATA, DBEXE
 node[:s4h][:media].each do |disk|
   sap_media disk do
     repo_path "/static/monsoon/sap/s4hana/pc/#{node[:s4h][:version]}"
@@ -31,6 +32,7 @@ node[:s4h][:media].each do |disk|
   end
 end
 
+#open all files using tar: DBLOG, DBDATA, DBEXE
 node[:s4h][:media].each do |disk|
   bash "restore files HANA DB-S4H - #{disk}" do
     user "root"
@@ -48,56 +50,46 @@ node[:s4h][:media].each do |disk|
 end
 
 
-#
-# sap_media "DBDATA" do
-#   extractDir "/hana/files"
-#   repo_path "static/monsoon/sap/s4hana/pc/1503"
-# end
-#
-# sap_media "DBEXE" do
-#   extractDir "/hana/files-exe"
-#   repo_path "static/monsoon/sap/s4hana/pc/1503"
-# end
-#
-# sap_media "DBLOG" do
-#   extractDir "/hana/files-log"
-#   repo_path "static/monsoon/sap/s4hana/pc/1503"
-# end
-
-
-
-bash "restore files HANA DB - S4H - LOG" do
+bash "HANA DB - hdbreg utility" do
   user "root"
   code <<-EOF
 
   set -e
+
   cd /hana
-  cat files/DBLOG/INST_FINAL_TECHCONF/dblog.tgz-* | tar -zpxvf - -C /
-  touch /hana/log/install.finished
+
+  chown -R 1000 data log shared usr_sap
+  /hana/shared/H50/global/hdb/install/bin/hdbreg -b -password #{node[:s4g][:db][:passsourse]} -U 1000 --shell=/bin/sh -H hanavhost=#{node[:hostname]} -nostart
+  touch /hana/shared/hdbreg.finished
 
   EOF
-  not_if { ::File.exists?("/hana/log/install.finished")}
+  not_if { ::File.exists?("/hana/shared/hdbreg.finished")}
 end
 
 
-
-bash "restore and recover HANA DB - S4H" do
+bash "HANA DB - Convert Topology" do
   user "root"
   code <<-EOF
 
   set -e
 
   cd /hana
-  cat files-log/INST_FINAL_TECHCONF/dblog.tgz-* | tar -zpxvf - -C /
-  cat files/INST_FINAL_TECHCONF/dbdata.tgz-* | tar -zpxvf - -C /
-  cat files-exe/INST_FINAL_TECHCONF/dbexe.tgz-* | tar -zpxvf - -C /
-
-  chown -R 1000 data log shared usr_sap
-
-  /hana/shared/H50/global/hdb/install/bin/hdbreg -b -password VA1MPwd_ -U 1000 --shell=/bin/sh -H hanavhost=mo-a193226cc -nostart
-
   su - h50adm  -c "hdbnsutil -convertTopology"
+  touch /hana/shared/topology.finished
 
+  EOF
+  not_if { ::File.exists?("/hana/shared/topology.finished")}
+end
+
+
+log "starting HANA DB for the first time takes a few minutes"
+bash "HANA DB - Start DB" do
+  user "root"
+  code <<-EOF
+
+  set -e
+
+  cd /hana
   su - h50adm  -c "HDB start"
 
   EOF
