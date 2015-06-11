@@ -9,20 +9,20 @@ sidadm = "#{node[:hana][:sid].downcase}adm"
 #needed for sap_media definition, all files will be downloaded to /hana insteaad of tmp
 ENV["TMPDIR"] = "/hana"
 
-directory "/hana/usr_sap" do
-  owner 'root'
-  group 'root'
-  mode '0755'
-  action :create
-end
-
-# ln -s /hana/usr_sap /usr/sap
-link "/usr/sap" do
-  action     :create
-  mode '0755'
-  link_type  :symbolic
-  to "/hana/usr_sap"
-end
+# directory "/hana/usr_sap" do
+#   owner 'root'
+#   group 'root'
+#   mode '0755'
+#   action :create
+# end
+#
+# # ln -s /hana/usr_sap /usr/sap
+# link "/usr/sap" do
+#   action     :create
+#   mode '0755'
+#   link_type  :symbolic
+#   to "/hana/usr_sap"
+# end
 
 #download all *.SAR files of the CAL image: DBLOG, DBDATA, DBEXE
 node[:s4h][:media].each do |disk|
