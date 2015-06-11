@@ -44,7 +44,7 @@ node[:s4h][:media].each do |disk|
   touch #{node[:s4h][:media_dir]}/#{disk}/install.finished
 
     EOF
-    not_if { ::File.exists?("#{node[:s4h][:media_dir]}#{disk}/install.finished")}
+    not_if { ::File.exists?("#{node[:s4h][:media_dir]}/#{disk}/install.finished")}
   end
 
 end
