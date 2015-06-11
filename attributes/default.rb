@@ -20,7 +20,7 @@ default[:s4h][:version]        = "1503"
 default[:s4h][:media] = ['DBLOG',
                          'DBDATA',
                          'DBEXE']
-default[:s4h][:media_dir]         = "/hana/files"
+default[:s4h][:media_dir]         = "/sapinst/files"
 default[:s4g][:db][:passsourse] = 'VA1MPwd_'
 default[:saplvm][:mountpoint][:first] = "/hana"
 

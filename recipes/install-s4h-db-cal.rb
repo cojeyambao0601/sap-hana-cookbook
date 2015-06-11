@@ -39,12 +39,12 @@ node[:s4h][:media].each do |disk|
     code <<-EOF
 
   set -e
-  cd /hana
-  cat files/#{disk}/INST_FINAL_TECHCONF/db*.tgz-* | tar -zpxvf - -C /
-  touch /hana/files/#{disk}/install.finished
+  cd #{node[:s4h][:media_dir]}
+  cat #{disk}/INST_FINAL_TECHCONF/db*.tgz-* | tar -zpxvf - -C /
+  touch #{node[:s4h][:media_dir]}/#{disk}/install.finished
 
     EOF
-    not_if { ::File.exists?("/hana/files/#{disk}/install.finished")}
+    not_if { ::File.exists?("#{node[:s4h][:media_dir]}#{disk}/install.finished")}
   end
 
 end
