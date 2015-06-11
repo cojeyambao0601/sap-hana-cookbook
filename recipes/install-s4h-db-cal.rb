@@ -4,10 +4,10 @@
 
 Chef::Log.info "Executing #{cookbook_name}::#{recipe_name}"
 
+sidadm = "#{node[:hana][:sid].downcase}adm"
+
 #needed for sap_media definition, all files will be downloaded to /hana insteaad of tmp
 ENV["TMPDIR"] = "/hana"
-
-repodir = "static/monsoon/sap/s4hana/pc/1503"
 
 directory "/hana/usr_sap" do
   owner 'root'
@@ -74,7 +74,7 @@ bash "HANA DB - Convert Topology" do
   set -e
 
   cd /hana
-  su - h50adm  -c "hdbnsutil -convertTopology"
+  su - #{node[:hana][:sid].downcase}adm  -c "hdbnsutil -convertTopology"
   touch /hana/shared/topology.finished
 
   EOF
@@ -90,7 +90,7 @@ bash "HANA DB - Start DB" do
   set -e
 
   cd /hana
-  su - h50adm  -c "HDB start"
+  su - #{node[:hana][:sid].downcase}adm  -c "HDB start"
 
   EOF
 end
