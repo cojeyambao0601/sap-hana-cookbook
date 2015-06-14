@@ -58,7 +58,9 @@ bash "HANA DB - hdbreg utility" do
 
   cd /hana
 
-  chown -R 1000 data log shared usr_sap
+  chown -R 1000 /usr/sap
+  chown -R 1000 data log shared
+
   /hana/shared/H50/global/hdb/install/bin/hdbreg -b -password #{node[:s4g][:db][:passsourse]} -U 1000 --shell=/bin/sh -H hanavhost=#{node[:hostname]} -nostart
   touch /hana/shared/hdbreg.finished
 
