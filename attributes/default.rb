@@ -13,6 +13,9 @@ default['hana']['import_content'] = "on"
 default['hana']['nostart']        = "off"
 default['hana']['hostname']       = ""
 
+# HANA HDI needs parameterized autostart, because want to set off
+default['hana']['autostart']      ="on"
+
 # needed for S4H
 default['s4h']['install']['repo'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/s4h"
 default[:s4h][:product]         = "pc"
