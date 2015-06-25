@@ -40,7 +40,7 @@ node[:s4h][:media].each do |disk|
 
   set -e
   cd #{node[:s4h][:media_dir]}
-  cat #{disk}/INST_FINAL_TECHCONF/db*.tgz-* | tar -zpxvf - -C /
+  cat #{disk}/db*.tgz-* | tar -zpxvf - -C /
   touch #{node[:s4h][:media_dir]}/#{disk}/install.finished
 
     EOF

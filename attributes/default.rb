@@ -19,7 +19,7 @@ default['hana']['autostart']      ="on"
 # needed for S4H
 default['s4h']['install']['repo'] = "http://moo-repo.wdf.sap.corp:8080/static/monsoon/sap/s4h"
 default[:s4h][:product]         = "pc"
-default[:s4h][:version]        = "1503"
+default[:s4h][:version]        = "1506"
 default[:s4h][:media] = ['DBLOG',
                          'DBDATA',
                          'DBEXE']
