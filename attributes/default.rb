@@ -13,7 +13,7 @@ default['hana']['import_content'] = "on"
 default['hana']['nostart']        = "off"
 default['hana']['hostname']       = ""
 
-# HANA HDI needs parameterized autostart, because want to set off
+# HANA HDI needs parameterized autostart/xs_engine, because want to set off
 default['hana']['autostart']      = "on"
 default['hana']['xs_engine']      = "on"
 
