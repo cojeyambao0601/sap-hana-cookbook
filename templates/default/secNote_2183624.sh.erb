@@ -1,0 +1,24 @@
+#!/bin/sh
+## Fix for SAP Security note 2183624 (see http://service.sap.com/sap/support/notes/2183624)
+
+## Some variables
+# ..SYS/.. is always on the actual host, not in the shared file system, hence hard-coded /usr/sap
+export RSEC_SSFS_DATAPATH=/usr/sap/<%= node[:hana][:sid] %>/SYS/global/hdb/security/ssfs
+
+export RSEC_SSFS_KEYPATH=<%= node[:hana][:installpath] %>/<%= node[:hana][:sid] %>/HDB<%= node[:hana][:instance] %>
+export SAPSYSTEMNAME=<%= node[:hana][:sid] %>
+
+exePath=<%= node[:hana][:installpath] %>/<%= node[:hana][:sid] %>/HDB<%= node[:hana][:instance] %>/exe
+
+## Generate and secure a new human-readable master key
+$exePath/rsecssfx generatekey -getPlainValueToConsole > $RSEC_SSFS_KEYPATH/<%= @fileName %>
+chmod 600 $RSEC_SSFS_KEYPATH/<%= @fileName %>
+
+## Re-encrypt SSFS with new key
+## Apparently, the resulting key file can be found in $RSEC_SSFS_KEYPATH and is called SSFS_<SID>.KEY
+$exePath/rsecssfx changekey -valuefile $RSEC_SSFS_KEYPATH/<%= @fileName %> -valuefile7bit
+
+## Configure key file location in global.ini
+# This deviates slightly from the instructions in the note: instead of modifying *file* global.ini,
+# the new value is set in the DB directly
+$exePath/hdbsql -i <%= node[:hana][:instance] %> -u SYSTEM -p <%= node[:hana][:syspassword] %> -a "ALTER SYSTEM ALTER CONFIGURATION ('global.ini', 'SYSTEM') SET ('cryptography', 'ssfs_key_file_path') = '$RSEC_SSFS_KEYPATH/SSFS_<%= node[:hana][:sid] %>.KEY' WITH RECONFIGURE"

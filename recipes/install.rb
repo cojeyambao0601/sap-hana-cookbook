@@ -27,3 +27,34 @@ if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/install.
 else
   log "It looks like there is already hana installed on this node, so skipping this step"
 end
+
+### Fix for SAP Security note 2183624 (see http://service.sap.com/sap/support/notes/2183624) ###
+# Place script and resulting key files in node[:hana][:installpath]
+# to ensure that everything (key in particular) is accessible from potential worker instances
+template "Place script to fix SAP Security note 2183624" do
+  source "secNote_2183624.sh.erb"
+  path "#{node[:hana][:installpath]}/#{node[:hana][:sid]}/HDB#{node[:hana][:instance]}/security_note_2183624.sh"
+  owner "#{node[:hana][:sid].downcase}adm"
+  variables(
+    :fileName => "generated_ssfs_master_key"
+  )
+  mode 00744
+  backup false
+end
+
+execute "Execute script to fix SAP Security note 2183624" do
+  command "su - #{node[:hana][:sid].downcase}adm -c \"#{node[:hana][:installpath]}/#{node[:hana][:sid]}/HDB#{node[:hana][:instance]}/security_note_2183624.sh\""
+  not_if "test -f #{node[:hana][:installpath]}/#{node[:hana][:sid]}/HDB#{node[:hana][:instance]}/SSFS_#{node[:hana][:sid]}.KEY"
+end
+
+# Restart HANA
+execute "Stop HANA" do
+  command "su - #{node[:hana][:sid].downcase}adm -c \"HDB stop\""
+  not_if "test -f #{node[:hana][:installpath]}/#{node[:hana][:sid]}/HDB#{node[:hana][:instance]}/ssfs_key.restart.done"
+end
+
+execute "Start HANA" do
+  command "su - #{node[:hana][:sid].downcase}adm -c \"HDB start\" && touch #{node[:hana][:installpath]}/#{node[:hana][:sid]}/HDB#{node[:hana][:instance]}/ssfs_key.restart.done"
+  not_if "test -f #{node[:hana][:installpath]}/#{node[:hana][:sid]}/HDB#{node[:hana][:instance]}/ssfs_key.restart.done"
+end
+###
