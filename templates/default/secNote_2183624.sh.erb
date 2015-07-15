@@ -1,0 +1,45 @@
+#!/bin/sh
+
+## Fix for SAP Security note 2183624 (see http://service.sap.com/sap/support/notes/2183624)
+## Script places resulting key file under node[:hana][:installpath] to ensure that it is
+## accessible from potential worker instances.
+
+export RSEC_SSFS_DATAPATH=/usr/sap/<%= node[:hana][:sid] %>/SYS/global/hdb/security/ssfs
+export RSEC_SSFS_KEYPATH=<%= node[:hana][:installpath] %>/<%= node[:hana][:sid] %>/HDB<%= node[:hana][:instance] %>
+export SAPSYSTEMNAME=<%= node[:hana][:sid] %>
+
+exePath=<%= node[:hana][:installpath] %>/<%= node[:hana][:sid] %>/HDB<%= node[:hana][:instance] %>/exe
+
+CMD="$exePath/rsecssfx generatekey -getPlainValueToConsole"
+echo "Generating a new, human-readable master key with command:" >> $HOME/security_note_2183624.log
+echo "$CMD" >> $HOME/security_note_2183624.log && $CMD > $RSEC_SSFS_KEYPATH/SSFS_<%= node[:hana][:sid] %>.txt
+
+
+# Secure the resulting file (not sure this is necessary)
+chmod 600 $RSEC_SSFS_KEYPATH/SSFS_<%= node[:hana][:sid] %>.txt
+
+
+CMD="$exePath/rsecssfx changekey -valuefile $RSEC_SSFS_KEYPATH/SSFS_<%= node[:hana][:sid] %>.txt -valuefile7bit"
+echo "Re-encrypting the SSFS with command:" >> $HOME/security_note_2183624.log
+echo "$CMD" >> $HOME/security_note_2183624.log
+$CMD >> $HOME/security_note_2183624.log
+
+
+# A binary(?) version of the key called SSFS_<SID>.KEY should have been created.
+# If this is the case, configure key file location.
+# This deviates slightly from the instructions in the note: instead of modifying an *.ini file,
+# the new value is set in the DB directly.
+if [ -f $RSEC_SSFS_KEYPATH/SSFS_<%= node[:hana][:sid] %>.KEY ]; then
+  $exePath/hdbsql -i <%= node[:hana][:instance] %> -u SYSTEM -p <%= node[:hana][:syspassword] %> -a "ALTER SYSTEM ALTER CONFIGURATION ('global.ini', 'SYSTEM') SET ('cryptography', 'ssfs_key_file_path') = '$RSEC_SSFS_KEYPATH/SSFS_<%= node[:hana][:sid] %>.KEY' WITH RECONFIGURE"
+
+  # Set a flag file to ensure this process is not performed again
+  touch $HOME/ssfs_key.changed
+
+  # Restart HANA
+  HDB stop
+  HDB start
+else
+  # Key does not exist. A human had better look into this, so set a flag file to ensure this process is not performed again.
+  echo "ERROR: expected key file $RSEC_SSFS_KEYPATH/SSFS_<%= node[:hana][:sid] %>.KEY does not exist" >> $HOME/security_note_2183624.log
+  touch $HOME/ssfs_key.err
+fi
