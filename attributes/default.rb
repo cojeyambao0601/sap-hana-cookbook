@@ -25,7 +25,7 @@ default[:s4h][:media] = ['DBLOG',
                          'DBDATA',
                          'DBEXE']
 default[:s4h][:media_dir]         = "/sapinst/files"
-default[:s4g][:db][:passsourse] = 'VA1MPwd_'
+default[:s4h][:db][:passsourse] = 'VA1MPwd_'
 ##default[:saplvm][:mountpoint][:first] = "/hana"
 # # Moved to readymade-sapproducts, not to mess things up for all other SAP installations
 

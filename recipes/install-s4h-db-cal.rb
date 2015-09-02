@@ -27,7 +27,7 @@ ENV["TMPDIR"] = "/hana"
 #download all *.SAR files of the CAL image: DBLOG, DBDATA, DBEXE
 node[:s4h][:media].each do |disk|
   sap_media disk do
-    repo_path "/static/monsoon/sap/s4hana/pc/#{node[:s4h][:version]}"
+    repo_path "/static/monsoon/sap/s4hana/#{node[:s4h][:product]}/#{node[:s4h][:version]}"
     extractDir "#{node[:s4h][:media_dir]}/#{disk}"
   end
 end
@@ -61,7 +61,7 @@ bash "HANA DB - hdbreg utility" do
   chown -R 1000 /usr/sap
   chown -R 1000 data log shared
 
-  /hana/shared/H50/global/hdb/install/bin/hdbreg -b -password #{node[:s4g][:db][:passsourse]} -U 1000 --shell=/bin/sh -H hanavhost=#{node[:hostname]} -nostart
+  /hana/shared/H50/global/hdb/install/bin/hdbreg -b -password #{node[:s4h][:db][:passsourse]} -U 1000 --shell=/bin/sh -H hanavhost=#{node[:hostname]} -nostart
   touch /hana/shared/hdbreg.finished
 
   EOF
