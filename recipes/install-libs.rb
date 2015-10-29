@@ -32,10 +32,10 @@ elsif platform?("redhat")
 
   include_recipe "yum::yum"
 
-  yum_repository "sap" do
-    repo_name "sap"
+  yum_repository "sap.RPMS.all" do
+    repo_name "sap.RPMS.all"
     description "SAP internal RPMs x86_64"
-    url "#{node[:repository][:host]}/mrepo/redhat/#{node[:platform_version].to_i}/sap-x86_64/RPMS.sap/"
+    url "#{node[:repository][:host]}/mrepo/redhat/#{node[:platform_version].to_i}/rhel#{node[:platform_version].to_i}server-x86_64/RPMS.all/"
     action :add
   end
 
