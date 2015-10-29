@@ -15,5 +15,6 @@ recipe           "hana::install-s4h-db-cal", "installs a S4H HANA DB from a CAL 
 
 depends          "nfs"
 depends          "sapinst"
+depends          "yum"
 
 supports         "suse"

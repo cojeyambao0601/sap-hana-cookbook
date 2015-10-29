@@ -29,6 +29,16 @@ if platform?("suse")
 elsif platform?("redhat")
   log "####################### Cookbook is not ready for Redhat yet! ########################"
   # raise "Cookbook is not ready for Redhat yet!"
+
+  include_recipe "yum::yum"
+
+  yum_repository "sap" do
+    repo_name "sap"
+    description "SAP internal RPMs x86_64"
+    url "#{node[:repository][:host]}/mrepo/redhat/#{node[:platform_version].to_i}/sap-x86_64/RPMS.sap/"
+    action :add
+  end
+
   package "compat-sap-c++" do
     action :upgrade
   end
