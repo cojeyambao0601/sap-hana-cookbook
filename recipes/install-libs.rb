@@ -10,7 +10,7 @@ if platform?("suse")
       action :remove
     end
 
-    log "####################### removing libgcc46 ########################"  
+    log "####################### removing libgcc46 ########################"
     package "libgcc46" do
       version "4.6.1_20110701-0.13.9"
       action :remove
@@ -35,11 +35,16 @@ elsif platform?("redhat")
   yum_repository "sap.RPMS.all" do
     description "SAP internal RPMs x86_64"
     url "#{node[:repository][:host]}/mrepo/redhat/#{node[:platform_version].to_i}/rhel#{node[:platform_version].to_i}server-x86_64/RPMS.all/"
-    action :add
+    action [:add, :makecache]
+    gpgcheck false
   end
-
-  package "compat-sap-c++" do
-    action :upgrade
+  
+  log "####################### Checking for Redhat dependencies ########################"
+  rhel_packages = [ "compat-sap-c++","libaio","libtool-ltdl" ]
+  rhel_packages.each do |pkg|
+    package pkg do
+      action :upgrade
+    end
   end
 
 else
