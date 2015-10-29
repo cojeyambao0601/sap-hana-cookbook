@@ -10,7 +10,7 @@ if platform?("suse")
       action :remove
     end
 
-    log "####################### removing libgcc46 ########################"  
+    log "####################### removing libgcc46 ########################"
     package "libgcc46" do
       version "4.6.1_20110701-0.13.9"
       action :remove
@@ -27,8 +27,22 @@ if platform?("suse")
     action :upgrade
   end
 elsif platform?("redhat")
-  log "####################### Cookbook is not ready for Redhat yet! ########################"
-  raise "Cookbook is not ready for Redhat yet!"
+  log "####################### Cookbook is tested in RH6 & 7 ########################"
+
+    description "SAP internal RPMs x86_64"
+    url "#{node[:repository][:host]}/mrepo/redhat/#{node[:platform_version].to_i}/rhel#{node[:platform_version].to_i}server-x86_64/RPMS.all/"
+    action [:add, :makecache]
+    gpgcheck false
+  end
+
+  log "####################### Checking for Redhat dependencies ########################"
+  rhel_packages = [ "libaio","libtool-ltdl" ]
+  rhel_packages.each do |pkg|
+    package pkg do
+      action :upgrade
+    end
+  end
+
 else
   log "####################### Cookbook currently supports only SuSE platform ########################"
   raise "Your choosen platform #{node["platform"]} is not supported for Cookbook and HANA!"
