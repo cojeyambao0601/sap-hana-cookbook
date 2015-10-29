@@ -27,14 +27,7 @@ if platform?("suse")
     action :upgrade
   end
 elsif platform?("redhat")
-  log "####################### Cookbook is tested in RH6 & 7 ########################"
-
-    description "SAP internal RPMs x86_64"
-    url "#{node[:repository][:host]}/mrepo/redhat/#{node[:platform_version].to_i}/rhel#{node[:platform_version].to_i}server-x86_64/RPMS.all/"
-    action [:add, :makecache]
-    gpgcheck false
-  end
-
+  
   log "####################### Checking for Redhat dependencies ########################"
   rhel_packages = [ "libaio","libtool-ltdl" ]
   rhel_packages.each do |pkg|
