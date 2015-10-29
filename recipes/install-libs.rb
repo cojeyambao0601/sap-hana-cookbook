@@ -27,12 +27,8 @@ if platform?("suse")
     action :upgrade
   end
 elsif platform?("redhat")
-  log "####################### Cookbook is not ready for Redhat yet! ########################"
-  # raise "Cookbook is not ready for Redhat yet!"
+  log "####################### Cookbook is tested in RH6 & 7 ########################"
 
-  # include_recipe "yum::yum"
-
-  yum_repository "sap.RPMS.all" do
     description "SAP internal RPMs x86_64"
     url "#{node[:repository][:host]}/mrepo/redhat/#{node[:platform_version].to_i}/rhel#{node[:platform_version].to_i}server-x86_64/RPMS.all/"
     action [:add, :makecache]
@@ -40,7 +36,7 @@ elsif platform?("redhat")
   end
 
   log "####################### Checking for Redhat dependencies ########################"
-  rhel_packages = [ "compat-sap-c++","libaio","libtool-ltdl" ]
+  rhel_packages = [ "libaio","libtool-ltdl" ]
   rhel_packages.each do |pkg|
     package pkg do
       action :upgrade
