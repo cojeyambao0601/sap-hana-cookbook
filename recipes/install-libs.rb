@@ -28,7 +28,11 @@ if platform?("suse")
   end
 elsif platform?("redhat")
   log "####################### Cookbook is not ready for Redhat yet! ########################"
-  raise "Cookbook is not ready for Redhat yet!"
+  # raise "Cookbook is not ready for Redhat yet!"
+  package "compat-sap-c++" do
+    action :upgrade
+  end
+
 else
   log "####################### Cookbook currently supports only SuSE platform ########################"
   raise "Your choosen platform #{node["platform"]} is not supported for Cookbook and HANA!"
