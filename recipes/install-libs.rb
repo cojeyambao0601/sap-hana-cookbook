@@ -38,7 +38,7 @@ elsif platform?("redhat")
     action [:add, :makecache]
     gpgcheck false
   end
-  
+
   log "####################### Checking for Redhat dependencies ########################"
   rhel_packages = [ "compat-sap-c++","libaio","libtool-ltdl" ]
   rhel_packages.each do |pkg|
