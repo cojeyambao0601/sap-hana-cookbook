@@ -30,7 +30,7 @@ elsif platform?("redhat")
   log "####################### Cookbook is not ready for Redhat yet! ########################"
   # raise "Cookbook is not ready for Redhat yet!"
 
-  include_recipe "yum::yum"
+  # include_recipe "yum::yum"
 
   yum_repository "sap.RPMS.all" do
     description "SAP internal RPMs x86_64"
