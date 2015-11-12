@@ -17,5 +17,7 @@ depends          "nfs"
 depends          "sapinst"
 depends          "yum"
 depends          "zypper"
+depends          "monsoon-search"
+
 
 supports         "suse"
