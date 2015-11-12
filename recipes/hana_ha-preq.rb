@@ -1,4 +1,3 @@
-include_attributes "#{cookbook_name}::hana_ha"
 include_recipe "zypper::default"
 
 
