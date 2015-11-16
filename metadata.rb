@@ -4,7 +4,7 @@ maintainer_email "yael.shoval@sap.com"
 license          ""
 description      "Install/upgrade SAP Hana and SAP Hana client"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "2.2.48"
+version          "2.2.51"
 recipe           "hana::install", "Installs a vanilla SAP Hana on the node"
 recipe           "hana::install-worker", "Installs a vanilla SAP Hana worker on the node"
 recipe           "hana::install-client", "Installs SAP Hana client on the node"
@@ -16,5 +16,8 @@ recipe           "hana::install-s4h-db-cal", "installs a S4H HANA DB from a CAL 
 depends          "nfs"
 depends          "sapinst"
 depends          "yum"
+depends          "zypper"
+depends          "monsoon-search"
+
 
 supports         "suse"
