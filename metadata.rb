@@ -20,4 +20,7 @@ depends          "zypper"
 depends          "monsoon-search"
 
 
-supports         "suse"
+%w{ suse redhat }.each do |os|
+  supports os
+end
+
