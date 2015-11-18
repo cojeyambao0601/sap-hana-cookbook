@@ -1,13 +1,15 @@
 Description 
 ===========
-This cookbook provides recipes for installing and updating SAP Hana database and SAP Hana client.
+This cookbook provides recipes for installing SAP Hana Server & Client / Sap Hana Client 
 
 Requirements
 ===========
 ### Platform
 
-* Suse SLES 11 SP2 (check [PAM](https://service.sap.com/sap/support/pam) for changes)
-* approx. 5GB in the directory specified in attribute `['install'].['tempdir']`
+* AWS Image - Suse SLES 11 SP3 (checked on this AMI: ami-f1f5acc1 from region: us-west-2)
+* approx. 25GB in the rootfs directory and 5GB for the specified directory in attribute `['install'].['tempdir']`
+* AWS EC2 Instance Type: c4.4xlarge (Minimum requirements - tested on this type)
+* 
 
 ### Attributes
 
@@ -18,11 +20,11 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 * `['hana'].['installpath']` - the directory into which SAP Hana will be installed.
 * `['hana'].['datapath']` - custom path for the data files, empty by default
 * `['hana'].['logpath']` - custom path for the log files, empty by default
-* `['hana'].['sid']` - the SID of the installation
-* `['hana'].['instance']` - the instance number of the installation
-* `['hana'].['userid']` - UID of the user SIDadm, which will be created during installation
-* `['hana'].['password']` - SIDadm's password
-* `['hana'].['syspassword']` - password for database user SYSTEM
+* `['hana'].['sid']` - the SID of the installation (HNA by default)
+* `['hana'].['instance']` - the instance number of the installation (00 by default, it will be used with the xs port later)
+* `['hana'].['userid']` - UID of the user SIDadm, which will be created during installation (1099 by default)
+* `['hana'].['password']` - SIDadm's password (Password must be > 8, and latters in upper and lower case)
+* `['hana'].['syspassword']` - password for database user SYSTEM (Password must be > 8, and latters in upper and lower case)
 * `['hana'].['checkhardware']` - flag to circumvent SAP's check, whether the used hardware is certified and meets certain requirements. Bear in mind that this is **not** meant for production systems, and don't expect any support.
 * `['hana'].['checkstoignore']` - installer checks to be ignored if the checkhardware flag is disabled
 * `['hana'].['clientsid']` - flag to specify a stand-alone Hana client installation (see below)
@@ -31,10 +33,9 @@ All attributes have sane default values (See `attributes/default.rb`). You can i
 #### Attributes related to the installation process.
 * `['install'].['tempdir']` - temporary directory needed during installation
 * `['install'].['files'].['sapcar']` - URL to the SAPCAR tool (for extracting SAR files)
-* `['install'].['files'].['saphostagent']` - URL to the SAR file for the SAP Host Agent
 * `['install'].['files'].['hanadb']` - URL to the SAR file for the Hana installer
 * `['install'].['files'].['hanaclient']` - URL to the SAR file for the Hana client installer
-* `['install'].['files'].['hanalifecyclemngr']` - URL to the SAR file for the Hana lifecycle manager installer
+
 
 All attributes under ['install'].['files'] hierarchy, must be accessible by http get method from the node on which the installation is executed.
 The structure of ['install'].['files'].['hanadb'] archive must be a sole folder named SAP_HANA_DATABASE and all installation files in it.
@@ -47,16 +48,8 @@ The structure of ['install'].['files'].['hanadb'] archive must be a sole folder 
 * `['hana'].['dist'].['master-mode-required']` - Only required for distributed installs with newer HANA versions - see the comments in the enable-master-mode.rb recipe.
 * `['hana'].['dist'].['waitcount']` - The number of wait loops for the NFS share to be available. Needed in case of distributed installation where the NFS share is being created in parallel to the SAP Hana node installations. Usually keep the defaults.
 * `['hana'].['dist'].['waittime']` - How much time each loop will wait. Usually keep the defaults.
-* `['hana'].['dist'].['2ndroot']` - second root user on worker, needed for upgrade process.
-* `['hana'].['dist'].['2ndrootpwd']` - second root user password on worker, needed for uprade process.
 
 All attributes under ['hana'].['dist'] hierarchy are related to distributed SAP Hana system installation process. Override only if you are installing a distributed system.
-
-#### Attributes related to the dataset import
-* `['install']['files']['datasetsources']`  - HTTP source of dataset file.
-* `['install']['files']['datasetnames']` - Array of dataset name present in the datasetsources folder. Example : ["LUMIRA.zip", "SFLIGHT.zip", "COPA.zip", "FOODMART.zip"]. Default value is [LUMIRA.ZIP]
-* `['install']['files']['deletedatasetsources']` - Delete or not dataset source when import is done. Default value is true
-
 
 ---
 Recipes
@@ -64,27 +57,10 @@ Recipes
 ### hana::install
 Installs single SAP Hana database on the node. 
 
-### hana::upgrade
-Recipe for upgrading an existing installation of SAP Hana on the node.
-
 ### hana::install-client
 Installs SAP Hana client on the node. The client will be installed into `['hana']['installpath']`/hdbclient.  
 The SAP Hana client installer accepts a parameter "*-s SID*", thereby "coupling" the client to a SAP Hana installation with the given SID on the same node.  
 If a stand-alone installation of the SAP Hana client is desired (i.e. there is **no** SAP Hana installation on the node), set the node attribute `['hana']['clientsid']` to "false".
-
-### hana::upgrade-client
-Recipe for upgrading an existing installation of SAP Hana client on the node.  
-As with the **[hana::install-client]** recipe, the node attribute `['hana']['clientsid']` needs to be set to "false" if this is a stand-alone client installation.
-
-### hana::install-worker
-Recipe to add a worker node to existing SAP Hana distributed cluster. To use this recipe you must provide the shared storage information by overriding the attribute ['hana'].['dist'].['sharedvolume']. See examples of distributed installation below.
-
-### hana::install-lifecyclemngr
-Installs SAP Hana lifecycle manager on the node. The lifecycle manager will be installed into `['hana']['installpath']`/`['hana']['sid']`/HLM. The lifecycle manager is dependent on an installed SAP Hana and will trigger an install if SAP Hana does not exist. 
-
-### hana::import-dataset
-Import selected dataset on the HANA database. Dataset sources need to be a ZIP file of one or multiple flat dataset.
-
 
 ---
 Usage
@@ -125,740 +101,72 @@ To install SAP Hana client on a node, use the following role:
 
 	run_list "recipe[hana::install-client]"
 
-### SAP Hana lifecycle manager on a node
-For installing SAP Hana lifecycle manager on a node in your landscape, add the **[hana::install-lifecyclemngr]** recipe to the node's run list.
+Usage
+===========
+### Deploying SAP Hana cookbook with Vagrant & AWS Provider (kitchen will be added in updated version)
+- Install Vagrant and VirtualBox using standard Vagrant 1.1+ plugin installation methods. After
+installing, `vagrant up` and specify the `aws` provider. An example is
+shown below.
 
-#### Example
-To install SAP Hana lifecycle manager on a node, use the following role:
+```
+$ vagrant plugin install vagrant-aws
+...
+$ vagrant up --provider=aws
+...
+```
 
-	name "hana-install-lifecyclemngr"
-	description "Role for installing SAP Hana lifecyclemanager"
+Of course prior to doing this, you'll need to obtain an AWS-compatible
+box file for Vagrant.
 
-	run_list "recipe[hana::install-lifecyclemngr]"
+## Quick Start
 
-### Upgrading existing SAP Hana installations
-The recipes **[hana::upgrade]** and **[hana::upgrade-client]** - as the names imply - will upgrade an existing SAP Hana and SAP Hana client, respectively.  
-Ensure that the upgrade packages are accessible by setting the node attributes `['install']['files']['hanadb']` and `['install']['files']['hanaclient']` accordingly.
+After installing the plugin (instructions above), the quickest way to get
+started is to actually use a dummy AWS box and specify all the details
+manually within a `config.vm.provider` block. So first, add the dummy
+box using any name you want:
 
-### Distributed SAP Hana cluster
-To install a distributed SAP Hana cluster you must have a shared NFS share prepared. You can use chef NFS cookbook for this, or manually create NFS share. Once the share is avalable you must provide the share information in the attribute ['hana'].['dist'].['sharedvolume']. This is needed for the first node (master) and the other nodes (workers). The master node is installed by using the hana:install recipe and the workers are installed by using the hana:install-worker recipe.
+```
+$ vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
+...
+```
 
-#### Example
-Assuming we have NFS share exported on your-nfs-node.yourdomain.com:/some/export/hana . To install the master node use the following role:
-
-	name "hana-install-master"
-	description "Role for installing SAP Hana master node in a distributed environment"
-
-	override_attributes(
-		"hana" => {
-			"installpath" => "/your/path/hana",
-			"dist" => {
-				"sharedvolume" => "your-nfs-node.yourdomain.com:/some/export/hana",
-				"sharedmountoptions" => "rw"
-			}
-		}
-	)
-
-	run_list "recipe[hana::install]",
-	         "recipe[hana::enable-master-mode]"
-
-This will mount the sharedvolume on your loclal installpath "/your/path/hana" and install the master SAP Hana database instance in it.
-Then use the following role to add new worker nodes to the cluster:
-
-	name "hana-install-worker"
-	description "Role for installing SAP Hana worker node in a distributed environment"
-
-	override_attributes(
-		"hana" => {
-			"installpath" => "/your/path/hana",
-			"dist" => {
-				"sharedvolume" => "your-nfs-node.yourdomain.com:/some/export/hana",
-				"sharedmountoptions" => "rw"
-			}
-		}
-	)
-
-	run_list "recipe[hana::install-worker]"
-
-### Import dataset on a node
-To import dataset on a node, please use the following recipe:
-
-  	name "import-dataset"
-  	description "Import dataset in a node"
-
-  	override_attributes(
-  	  "install": {
-          "files": {
-            "datasetnames": [
-              "LUMIRA.zip",
-              "SFLIGHT.zip",
-              "COPA.zip",
-              "FOODMART.zip"
-            ]
-          }
-  	)
-
-  	run_list "recipe[hana::import-dataset]"
-
-Please note that for big dataset, you need to change the "tempdir" attribute as default one has only 7GB free:
+Please execute the following in order to complete installation.
 
 
-     	override_attributes(
-      	  "install": {
-              "files": {
-                "datasetnames": [
-                  "LUMIRA.zip",
-                  "SFLIGHT.zip",
-                  "COPA.zip",
-                  "FOODMART.zip"
-                ]
-              },
-          "tempdir": "/usr/sap"
-      	)
+Firstly please make sure you have a cloned repository of the cookbook.
 
----
-Provided LWRP
-===============
-The LWRP which are incuded with this cookbook are wrapping different hana client utilities. This is very useful when you need to automate different hana related tasks with chef automation. Operations like schema creation, execution of sql commands or files with sql commands and various hana repository operations are supported. You can use any provided resource on any machine where you are using the hana client recipe (install-client).
+	git clone https://github.com/sapcc/sap-hana-cookbook.git
 
-### hana\_hdbsql 
 
-#### Description
 
-Applications or other cookbooks can use the hana\_hdbsql resource to run sql commands or execute a list of commands from a .sql file.
+Vagrant Prerequisites (Please execute these commands in you're shell environment where you will run the vagrant)
 
-#### Usage
-
-To use hana_runsql command, you must specify the following parameters:
-* sql_command or sql_file_path
-   - sql_command - a single command to run
-   - sql_file_path - full path to .sql file which may contain multiple commands / sql statements
-* username
-   - The DB username under which the session will run:
-* password
-   - The DB user passowrd
-* sql_file_command_separator
-   - if you are using sql_file_path option, you can specify which command separator in the file is used
-   - defaults to ;
-   - optional
-* host
-   - the host name on which the hana database is installed
-   - defaults to localhost
-   - optional
-* instance_number
-   - the hana db instance number
-   - defaults to 00
-   - optional
-* print_sql_commands
-   - boolean. if set to true the executed sql commands will be outputed before the command output
-   - defaults to true
-* print_table_header
-   - boolean. if set to true in the select statemets will output the table headers
-   - defaults to true
-* output_file_path
-   - if set, will write the command output to a file instead of writing it to stdout
-   - defaults to none, which means that the outout will be sent to stdout
-* expected_exit_codes
-	- allowed  exit codes   ,otherwise it is an error
-	- array of exit code in format [n,n]
 	
-#### Examples
+	a.  Fill in the AWS values of the following attributes:
 
-To run a SQL command directly:
-
-	hana_runsql "select some rows from a table" do
-		sql_command "SELECT * FROM \"MYSCHEMA\".\"MYTABLENAME\""
-		username "YOUR-HANA-USER-NAME"
-		password "YOUR-HANA-USER-PASSWORD"
-	end
-
-To execute a list of commands from .sql file:
-
-	hana_runsql "hana_runsql from file - /mydir/mysqlfile.sql" do
-		sql_file_path "/mydir/mysqlfile.sql"
-		username "YOUR-HANA-USER-NAME"
-		password "YOUR-HANA-USER-PASSWORD"
-	end
-
-To execute a SQL command, and write output to a file without table headers or the command itself:
-
-	hana_hdbsql "Check number of documents in the view" do
-		sql_command "SELECT count(distinct \"id\") as count FROM \"_SYS_BIC\".\"srch/AV_DOCS_GRP_CONTENT_MD\""
-		print_sql_commands false
-		print_table_header false         
-		username "SRCH"
-		username "YOUR-HANA-USER-NAME"
-		password "YOUR-HANA-USER-PASSWORD"
-	end
-
-To execute a drop user for unexisting user:
-
-	hana_hdbsql "drop user" do
-		sql_command "DROP USER \"YOUR_USER_NAME\" CASCADE"
-		username "YOUR-HANA-USER-NAME"
-		password "YOUR-HANA-USER-PASSWORD"
-		expected_exit_codes [76,0] #invalid user name
-	end
+     		export AWS_ACCESS_KEY='';
+     		export AWS_SECRET_KEY='';
+    			export AWS_REGION='';
+    			export AWS_KEYPAIR_NAME='';
+    			export AWS_AMI='ami-f1f5acc1';
+    			export AWS_INSTANCE_TYPE='';
 	
-### hana\_hdbuserstore
+	b. Fill in the HANA-Cookbook Path value (without the cookbook dir itself)
 
-#### Description
+ 		export COOKBOOK_PATH='';     
+	Example: COOKBOOK_PATH='/home/user/cookbooks/';
 
-In SAP Hana, automation around the content repository is done via the regi command line utility. To be able to use the regi command, you need to initialize a local user store, which will contain authentication information to your SAP Hana system. Use the hana\_hdbuserstore resource to create / delete local user stores befause any regi usage.
 
-#### Usage
+Cookbook Prerequisites: (Please fill in the following parameters in the HANA cookbook attributes/default.rb)
 
-The hana_hdbuserstore resource has 2 actions: set and delete.
+		# Source of binary files (please fill in the values with full address that holds the binary files)
 
-The set action is used to create a new user store. The delete action is used to remove existing user store.
+		default['install']['files']['sapcar']                = ""
 
-Here are the accepted arguments:
-* action
-   - Action, can be set or delete. 
-   - default action is set
-   - optional
-* key
-   - Name attribute
-   - The workspace key is a unique identifier
-   - mandatory
-* username
-   - The DB user name
-   - optional for delete action, mandatory for set
-* password
-   - The DB user passowrd
-   - optional for delete action, mandatory for set
-* host
-   - the host name on which the hana database is installed
-   - defaults host is localhost
-   - optional
-* instance_number
-   - the hana db instance number
-   - defaults instance_number is 00
-   - optional
+		default['install']['files']['hanadb']               = ""
 
-#### Examples
+		default['install']['files']['hanaclient']           = ""
 
-To add a new store with key "buildkey":
+	Example: default['install']['files']['sapcar']                = "https://someserver.com/SAPCAR"
 
-	# create hdbuserstore
-	hana_hdbuserstore "buildkey" do
-		username "SYSTEM"
-		password "SYSTEM user password"
-	end
 
-To remove a store with key "buildkey":
-
-	# remove workspace
-	hana_hdbuserstore "buildkey" do
-		action :delete
-	end
-
-### hana\_regi
-
-#### Description
-
-The regi command line utility is used to automate operations around the HANA repository. HANA repository is source control like system (but not only), which comes with SAP Hana, and allows to import / export software packages, create / delete / manipulate views (attribute, analytical, calculation) and additional operations. This resource allows to automate regi tasks with chef, which is very useful for automating SAP Hana application development tasks, and continous deployment tasks of applications which run on top of SAP Hana.
-
-#### Usages
-
-##### regi workspace operations
-The hana_regi has 2 actions which relate to creation and removal of a regi workspace: create_workspace and delete_workspace. A workspace is a local instance of the SAP Hana repository. To execute any repository operation you have to create a workspace first.
-
-##### Examples
-
-To add a new workspace using the user store with key "buildkey":
-
-	# create workspace
-	hana_regi "create repository workspace" do
-		key "buildkey"
-		workspace_path "/your/path/to/new/workspace"
-		action :create_workspace
-	end
-
-To remove a workspace with key "buildkey":
-
-	# remove workspace
-	hana_regi "Delete workspace" do
-		workspace_path "#{regi_workspace}"
-		action :delete_workspace
-	end
-
-##### regi delivery unit operations
-The hana_regi has 2 actions which relate to delivery unit mechanism: export_delivery_unit and import_delivery_unit. A delivery unit in SAP Hana is usually a package of application code, view, tables and data. You can use export_delivery_unit action to export code from existing development machine into a archved file, and import_delivery_unit to import the same archive into a different system. This can be useful in continuous integration / delivery process. In addition when installing a new SAP Hana instance, you might want to import existing applications / functionality which comes with SAP Hana installation in the form of optional delivery units. Examples to this are INA services and UI toolkits and Custom Text analytics dictinaries.
-
-##### Examples
-
-To import a delivery unit use:
-
-	# import INA UI toolkit
-	hana_regi "Import INA UI Toolkit delivery unit" do
-		delivery_unit_path "#{node['hana']['installpath']}/#{node['hana']['sid']}/global/hdb/content/HCO_INA_UITOOLKIT.tgz"
-		workspace_path "#{regi_workspace}"
-		action :import_delivery_unit
-	end
-
-To export a delivery unit use:
-
-	# export DU, this will export the package com.sap.someapp to a file in /your/export/path/com.sap.someapp.tgz
-	hana_regi "Export delivery unit" do
-		delivery_unit_name "com.sap.someapp"
-		delivery_unit_vendor "sap"
-		delivery_unit_path "/your/export/path/"
-		workspace_path "#{regi_workspace}"
-		action :import_delivery_unit
-	end
-
-##### regi package operations
-The hana_regi has 3 actions which relate to management of packages: track_package, untrack_package and delete_package. Packages in hana are simmilar to packages in Java, and are used to bundle together application files which relates to the same topic. Use track_package if you want to work on a specific package on you local workspace. Use untrack_package to remove a workspace link to a packge. Use delete_package to delete the contents of a package from the local workspace and from the local file system
-
-##### Examples
-
-To track a package "mypackage.app"
-
-	# track
-	hana_regi "Track package mypackage.app" do
-		package "mypackage.app"
-		workspace_path "#{regi_workspace}"
-		action :track_package
-	end
-
-To untrack a package "mypackage.app"
-
-	# track
-	hana_regi "Un track package mypackage.app" do
-		package "mypackage.app"
-		workspace_path "#{regi_workspace}"
-		action :untrack_package
-	end
-
-To delete a package "mypackage.app"
-
-	# completely delete
-	hana_regi "Delete package mypackage.app" do
-		workspace_path "#{regi_workspace}"
-		package "mypackage.app"
-		action :delete_package
-	end
-
-##### regi repository operations
-The hana_regi has 4 actions which relate to repository manipulation: checkout, commit, activate, and revert. These are similar to common source control repository operations, and allow to checkout, commit and revert files. In addition there is an action which activates the application in the repository, and applies it to the SAP Hana system. An example to activation is activation of attribute / analytical / calculation views. But also other artifacts might be in a need of activation before they can be used in productive manner.
-
-##### Examples
-
-Some useful examples of how to use checkout
-
-	# checkout
-	hana_regi "Checkout package mypackage.app" do
-		workspace_path "#{regi_workspace}"
-		force true
-		package "mypackage.app"
-		action :checkout
-	end
-	
-	# checkout
-	hana_regi "Checkout package mypackage.app and it's sub packages" do
-		workspace_path "#{regi_workspace}"
-		force true
-		packages "mypackage.app"
-		action :checkout
-	end
-	
-	# checkout
-	hana_regi "Checkout all tracked objects" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object_type "trackedPackages"
-		action :checkout
-	end
-	
-	# checkout
-	hana_regi "Checkout a file" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object "/my/path/to/a/tracked/file"
-		action :checkout
-	end
-
-Some useful examples of how to use commit
-
-	# commit
-	hana_regi "Commit package mypackage.app" do
-		workspace_path "#{regi_workspace}"
-		force true
-		package "mypackage.app"
-		action :commit
-	end
-	
-	# commit
-	hana_regi "Commit package mypackage.app and it's sub packages" do
-		workspace_path "#{regi_workspace}"
-		force true
-		packages "mypackage.app"
-		action :commit
-	end
-	
-	# commit
-	hana_regi "Commit all tracked objects" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object_type "trackedPackages"
-		action :commit
-	end
-	
-	# commit
-	hana_regi "Commit a file" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object "/my/path/to/a/tracked/file"
-		action :commit
-	end
-
-Some useful examples of how to use revert
-
-	# revert
-	hana_regi "Revert package mypackage.app" do
-		workspace_path "#{regi_workspace}"
-		force true
-		package "mypackage.app"
-		action :revert
-	end
-	
-	# revert
-	hana_regi "Revert package mypackage.app and it's sub packages" do
-		workspace_path "#{regi_workspace}"
-		force true
-		packages "mypackage.app"
-		action :revert
-	end
-	
-	# revert
-	hana_regi "Revert all tracked objects" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object_type "trackedPackages"
-		action :revert
-	end
-	
-	# revert
-	hana_regi "Revert all inactive objects" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object_type "inactiveObjects"
-		action :revert
-	end
-	
-	
-	# revert
-	hana_regi "Revert a file" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object "/my/path/to/a/tracked/file"
-		action :revert
-	end
-
-Some useful examples of how to use activate
-
-	# activate
-	hana_regi "Activate package mypackage.app" do
-		workspace_path "#{regi_workspace}"
-		force true
-		package "mypackage.app"
-		action :activate
-	end
-	
-	# activate
-	hana_regi "Activate package mypackage.app and it's sub packages" do
-		workspace_path "#{regi_workspace}"
-		force true
-		packages "mypackage.app"
-		action :activate
-	end
-	
-	# activate
-	hana_regi "Activate all tracked objects" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object_type "trackedPackages"
-		action :activate
-	end
-	
-	# activate
-	hana_regi "Activate all inactive objects" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object_type "inactiveObjects"
-		action :activate
-	end
-	
-	
-	# activate
-	hana_regi "Activate a file" do
-		workspace_path "#{regi_workspace}"
-		force true
-		object "/my/path/to/a/tracked/file"
-		action :activate
-	end
-
-### hana\_hlmcli
-
-#### Description
-
-Applications or other cookbooks can use the hana_hlmcli resource to run HANA Lifecycle Manager commands.
-
-#### Usage
-
-The hana_hlmcli resource has 11 actions: update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, remove_host, add_system, remove_system and rename.
-
-The update_hlm action is used to update the HANA Lifecycle Manager. The add_afl action is used to install the HANA Application Function Library. The add_lca action is used to install the HANA liveCache Applications. The add_sda action is used to install the HANA Smart Data Access. The apply_sp is used to apply HANA support packages. The deploy_content action is used to deploy HANA Applications Content. The add_host action is used to add another server to a distributed HANA system. The remove_host action is used to remove a server from a distributed HANA system. The add_system action is used to add another HANA installation to the same server. The remove_system action is used to remove another HANA installation from the same server. The rename action is used to change the hostname, SID, and/or system number of the HANA installation.
-
-Here are the accepted arguments:
-* action
-   - Action, can be update_hlm, add_afl, add_lca, add_sda, apply_sp, deploy_content, add_host, remove_host, add_system, remove_system, or rename. 
-   - no default action is set
-   - optional
-* update_source
-   - The location to pull updates from
-   - Can be _marketplace_ for Service Marketplace or _inbox_ for local filesystem
-   - default source is _marketplace_
-   - needed by update_hlm, apply_sp
-* smp_user
-   - The user name to connect to Service Marketplace
-   - needed when `update_source` is _marketplace_
-* smp_pass
-   - The password to connect to Service Marketplace
-   - needed when `update_source` is _marketplace_
-* use_proxy
-   - Specifies if a proxy is needed for external connections
-   - default is true
-   - needed when `update_source` is _marketplace_
-* proxy_host
-   - Hostname of the proxy server
-   - default is proxy
-   - needed when `use_proxy` is _true_
-* proxy_port
-   - Port of the proxy server
-   - default is 8080
-   - needed when `use_proxy` is _true_
-* archive_path
-   - Local path to package
-   - needed by add_afl, add_lca, add_sda, deploy_content, add_system, and `update_source` is _inbox_
-* sapadm_pass
-   - Password of the sapadm on remote server
-   - needed by add_host
-* hostname
-   - Hostname of additional server
-   - needed by add_host, remove_host, and optionally rename
-* role
-   - Role of additional server
-   - can be _worker_ or _slave_
-   - needed by add_host
-* target_memory
-   - Specifies the amount of RAM (in MB) to use on additional server or the distribution of RAM on local system
-   - needed by add_system, remove_system, and add_host
-* target_sid
-   - The new system id
-   - needed by add_system, remove_system, and optionally rename
-* target_instance
-   - The new system instance number
-   - needed by add_system, remove_system, and optionally rename
-* target_datapath and target_logpath
-   - The path for the data and log directories of the new system
-   - defaults to the HANA install defaults
-   - needed by add_system
-* target_pass
-   - The password to be used for sidadm and SYSTEM of the new system
-   - needed by add_system, and remove_system
-
-#### Examples
-
-Update the HANA Lifecycle Manager from package
-
-    hana_hlmcli "Update the Lifecycle Manager" do
-        action :update_hlm
-        update_source "inbox"
-        archive_path "/tmp/SAPHANALM06_0-10012745.SAR"
-    end
-
-Add AFL SDA or LCA
-
-    hana_hlmcli "Add AFL to HANA" do
-        action :add_afl
-        archive_path "/tmp/IMDB_AFL100_60.SAR"
-    end
-
-Apply support pack(s) (note: archive_path is a directory not a file and must contain the stack.xml and support packs)
-
-    hana_hlmcli "Apply sp update" do
-        action :apply_sp
-        archive_path "/tmp/inbox"
-        update_source "inbox"
-    end
-
-Install application content (note: archive_path is the zip archive of the content DVD)
-
-    hana_hlmcli "Application content deploy" do
-        action :deploy_content
-        archive_path "/tmp/51046579.zip"
-    end
-
-Add another server to HANA system
-
-    hana_hlmcli "Add worker node" do
-        action :add_host
-        hostname "someserver.wdf.sap.corp"
-        role "worker"
-        sapadm_pass "ChangeMe"
-        target_memory "20480"
-    end
-	
-Remove additional HANA server
-
-    hana_hlmcli "Remove node" do
-        action :remove_host
-        hostname "someserver.wdf.sap.corp"
-    end
-
-Add another HANA instance to the same server (note: archive_path is the location of the HANA install DVD)
-
-    hana_hlmcli "Add another instance" do
-        action :add_system
-        archive_path "/mnt" #HANA install DVD
-        target_sid "NEW"
-        target_instance 55
-        target_memory "HNA=16384,NEW=16384"
-        target_logpath "/hana/NEW/log"
-        target_pass "PleaseChangeMe"
-    end
-
-Remove additional HANA instance on the same server (note: archive_path is the location of the HANA install DVD)
-	
-	hana_hlmcli "Remove additional instance" do
-		action :remove_system
-		archive_path "/hana/shared/pkgs" #HANA install DVD
-		target_sid "NEW"
-		target_memory "HNA=32768"
-		target_pass "P1easeChangeMe"
-	end
-	
-Change hostname, sid, or sysnr of HANA server
-
-    hana_hlmcli "Change HANA SID" do
-        action :rename
-        target_sid "NDB"
-    end
-	
-	hana_hlmcli "Change HANA Hostname & Sysnr" do
-        action :rename
-        hostname "someserver.wdf.sap.corp"
-		target_instance "33"
-    end
-	
----
-Real world full examples of hana resources
-===============
-
-### Create regi workspace, use regi .. then remove the store and the workspace
-
-#### Usage
-
-	# create new store
-	hana_hdbuserstore "buildkey" do
-		username "SYSTEM"
-		password "#{node['hana']['password']}"
-		action :set
-	end
-	
-	# create the repository workspace
-		hana_regi "create workspace" do
-		path regi_workspace
-		key "buildkey"
-		action :create_workspace
-	end
-
-	#### use regi to activate all inactive objects
-	hana_regi "Activate inactive objects for example added attribute views" do
-		workspace_path "#{regi_workspace}"
-		object_type "inactiveObjects"
-		action :activate
-	end	
-
-	# remove store
-	hana_hdbuserstore "buildkey" do
-		action :delete
-	end
-
-	hana_regi "Delete workspace" do
-		workspace_path "#{regi_workspace}"
-		action :delete_workspace
-	end	
-
-### Use hdbsql command to check how many rows we have in a given attribute view
-
-#### Usage
-
-	hana_hdbsql "Check number of documents in the view" do
-		sql_command "SELECT count(distinct \"id\") as count FROM \"_SYS_BIC\".\"your_package/AV_YOUR_VIEW_NAME\""
-		print_sql_commands false
-		print_table_header false			
-		username "SRCH"
-		password "#{node['youruser']['yourpassword']}"
-	end
-
-### Use regi command to import INA UI and services delivery units
-
-#### Usage
-
-	# create new store
-	hana_hdbuserstore "buildkey" do
-		username "SYSTEM"
-		password "#{node['hana']['password']}"
-		action :set
-	end
-	
-	# create the repository workspace
-		hana_regi "create workspace" do
-		path regi_workspace
-		key "buildkey"
-		action :create_workspace
-	end
-
-	hana_regi "Import INA UI Toolkit delivery unit" do
-		delivery_unit_path "#{node['hana']['installpath']}/#{node['hana']['sid']}/global/hdb/content/HCO_INA_UITOOLKIT.tgz"
-		workspace_path "#{regi_workspace}"
-		action :import_delivery_unit
-	end
-
-	hana_regi "Import INA Service delivery unit" do
-		delivery_unit_path "#{node['hana']['installpath']}/#{node['hana']['sid']}/global/hdb/content/HCO_INA_SERVICE.tgz"
-		workspace_path "#{regi_workspace}"
-		action :import_delivery_unit
-	end
-
-	# remove store
-	hana_hdbuserstore "buildkey" do
-		action :delete
-	end
-
-	hana_regi "Delete workspace" do
-		workspace_path "#{regi_workspace}"
-		action :delete_workspace
-	end
-
-### Use hdbsql command to run a sql script which contains your create schema sql ddl statements
-
-#### Usage
-
-	["create-schema.sql"].each do |file|
-		cookbook_file "#{temp_dir}/#{file}" do
-		  source "#{file}"
-		  mode 0644
-		  owner "root"
-		  group "root"
-		end
-
-		hana_hdbsql "hana_hdbsql from file - #{file}" do
-			sql_file_path "#{temp_dir}/#{file}"
-			username "#{node['yourapp']['your-user-name']}"
-			password "#{node['yourapp']['your-user-password']}"
-		end	
-	end
