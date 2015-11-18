@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
                         inline: "[[ `which chef-solo` ]] || curl -L https://www.opscode.com/chef/install.sh | sudo bash"
     # Execute the HANA cookcook
     config.vm.provision :chef_solo do |chef|
-      chef.cookbooks_path = ","
+      chef.cookbooks_path = ENV['COOKBOOK_PATH']
       chef.log_level = ENV['CHEF_LOG'] ? ENV['CHEF_LOG'].to_sym : :debug
       chef.add_recipe "hana::install"
     end
