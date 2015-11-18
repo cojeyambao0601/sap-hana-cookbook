@@ -2,11 +2,6 @@
 # Recipe:: install
 # Installs SAP Hana on the node.
 
-# check if there is a shared volume defined - if yes, we are on a master and run it, if no continue
-if "#{node['hana']['dist']['sharedvolume']}" != ""
-  Chef::Log.info "a shared volume #{node['hana']['dist']['sharedvolume']} is defined and will be mounted"
-  include_recipe "hana::mount-shared-volume"
-end
 
 # check if any hana installation was done already
 if !File.exists?("#{node['hana']['installpath']}/#{node['hana']['sid']}/install.finished")

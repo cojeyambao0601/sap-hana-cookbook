@@ -10,6 +10,12 @@ define :client do
     sid = ""
   end
 
+ log "---------"
+  log "using the hana_install_command"
+  log "---------"
+
+
+
   hana_install_command = "./hdbinst -a client -p #{node['hana']['installpath']}/hdbclient #{sid}"
 
   log "---------"
