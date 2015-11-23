@@ -1,7 +1,7 @@
 Description 
 ===========
 This cookbook provides recipes for installing SAP Hana Server & Client / Sap Hana Client
-Tested with Vagrant & AWS Provider
+Tested with Vagrant & AWS Provider - [more info & documentation can be found here](http://sapcc.github.io/sap-cookbook-docs/docs/hana/)
 
 Requirements
 ===========
