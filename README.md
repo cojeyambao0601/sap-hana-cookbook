@@ -147,27 +147,27 @@ Vagrant Prerequisites (Please execute these commands in you're shell environment
 
      		export AWS_ACCESS_KEY='';
      		export AWS_SECRET_KEY='';
-    			export AWS_REGION='';
-    			export AWS_KEYPAIR_NAME='';
-    			export AWS_AMI='ami-f1f5acc1';
-    			export AWS_INSTANCE_TYPE='';
+    		export AWS_REGION='';
+    		export AWS_KEYPAIR_NAME='';
+    		export AWS_AMI='ami-f1f5acc1';
+    		export AWS_INSTANCE_TYPE='';
 	
 	b. Fill in the HANA-Cookbook Path value (without the cookbook dir itself)
 
  		export COOKBOOK_PATH='';     
-	Example: COOKBOOK_PATH='/home/user/cookbooks/';
+		Example: COOKBOOK_PATH='/home/user/cookbooks/';
 
 
 Cookbook Prerequisites: (Please fill in the following parameters in the HANA cookbook attributes/default.rb)
 
 		# Source of binary files (please fill in the values with full address that holds the binary files)
 
-		default['install']['files']['sapcar']                = ""
+		default['install']['files']['sapcar']               = ""
 
 		default['install']['files']['hanadb']               = ""
 
 		default['install']['files']['hanaclient']           = ""
 
-	Example: default['install']['files']['sapcar']                = "https://someserver.com/SAPCAR"
+		Example: default['install']['files']['sapcar']      = "https://someserver.com/SAPCAR"
 
 
