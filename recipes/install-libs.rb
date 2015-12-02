@@ -27,9 +27,9 @@ if platform?("suse")
     action :upgrade
   end
 elsif platform?("redhat")
-  
+
   log "####################### Checking for Redhat dependencies ########################"
-  rhel_packages = [ "libaio","libtool-ltdl" ]
+  rhel_packages = ["libaio", "libtool-ltdl"]
   rhel_packages.each do |pkg|
     package pkg do
       action :upgrade
@@ -38,5 +38,5 @@ elsif platform?("redhat")
 
 else
   log "####################### Cookbook currently supports only SuSE platform ########################"
-  raise "Your choosen platform #{node["platform"]} is not supported for Cookbook and HANA!"
+  raise "Your choosen platform #{node['platform']} is not supported for Cookbook and HANA!"
 end
